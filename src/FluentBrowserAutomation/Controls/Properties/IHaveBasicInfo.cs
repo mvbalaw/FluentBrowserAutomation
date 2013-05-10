@@ -18,6 +18,7 @@ namespace FluentBrowserAutomation
 		IWebElement Element { get; }
 		string HowFound { get; }
 		string Id { get; }
+		string Name { get; }
 	}
 
 	public static class IBasicInfoExtensions

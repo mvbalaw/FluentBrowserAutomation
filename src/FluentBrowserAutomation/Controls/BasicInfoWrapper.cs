@@ -22,6 +22,16 @@ namespace FluentBrowserAutomation.Controls
 				return Element.GetAttribute("id");
 			}
 		}
+		
+		public string Name
+		{
+			get
+			{
+				this.Exists().ShouldBeTrue();
+				return Element.GetAttribute("name");
+			}
+		}
+		
 		public string HowFound { get; private set; }
 	}
 }
