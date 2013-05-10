@@ -98,6 +98,7 @@
     <Compile Include="Controls\Properties\ICouldBeDisabled.cs" />
     <Compile Include="Controls\Properties\IHaveBasicInfo.cs" />
     <Compile Include="Controls\Properties\INeedFocus.cs" />
+    <Compile Include="Extensions\IPageWrapper.cs" />
     <Compile Include="Framework\BrowserManager.cs" />
     <Compile Include="Controls\ButtonWrapper.cs" />
     <Compile Include="Controls\CheckBoxWrapper.cs" />
