@@ -26,6 +26,7 @@ namespace FluentBrowserAutomation
 		CheckBoxWrapper CheckBoxWithId([NotNull] string id);
 		CheckBoxWrapper CheckBoxWithLabel([NotNull] string id);
 		IEnumerable<CheckBoxWrapper> CheckBoxes();
+		IEnumerable<CheckBoxWrapper> CheckBoxesWithName([NotNull] string name);
 		void CloseBrowser();
 		ContainerWrapper ContainerWithId([NotNull] string id);
 		DialogHandlerWrapper Dialog([NotNull] Action action);
@@ -130,6 +131,13 @@ namespace FluentBrowserAutomation
 		{
 			const string howFound = "type 'checkbox'";
 			var checkBoxes = GetInputsByInputType("checkbox");
+			return checkBoxes.Select(x => new CheckBoxWrapper(x, howFound, this));
+		}
+
+		public IEnumerable<CheckBoxWrapper> CheckBoxesWithName(string name)
+		{
+			const string howFound = "type 'checkbox'";
+			var checkBoxes = GetInputs().Where(x => x.GetAttribute("type") == "checkbox" && x.GetAttribute("name") == name);
 			return checkBoxes.Select(x => new CheckBoxWrapper(x, howFound, this));
 		}
 
