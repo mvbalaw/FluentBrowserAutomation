@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Web;
-
 using FluentAssert;
-
 using FluentBrowserAutomation.Controls;
 using FluentBrowserAutomation.Declarative;
 using FluentBrowserAutomation.Framework;
-
 using JetBrains.Annotations;
-
 using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation
@@ -60,6 +56,7 @@ namespace FluentBrowserAutomation
 		SpanWrapper SpanWithText([NotNull] string spanText);
 		IEnumerable<SpanWrapper> Spans();
 		TableWrapper TableWithId([NotNull] string id);
+		ListWrapper ListWithId([NotNull] string id);
 		IEnumerable<TableWrapper> Tables();
 		TextBoxWrapper TextBoxWithId([NotNull] string id);
 		TextBoxWrapper TextBoxWithLabel([NotNull] string label);
@@ -211,7 +208,7 @@ namespace FluentBrowserAutomation
 
 		public BrowserContext IdOfFieldWithFocusShouldBe(string expectedId)
 		{
-			var id = Browser.SwitchTo().ActiveElement().GetAttribute("id");
+			string id = Browser.SwitchTo().ActiveElement().GetAttribute("id");
 			id.ShouldBeEqualTo(expectedId);
 			return this;
 		}
@@ -271,13 +268,23 @@ namespace FluentBrowserAutomation
 
 		public LinkWrapper LinkWithText(string text)
 		{
-			var htmlEscapedText = HttpUtility.HtmlEncode(text);
+			string htmlEscapedText = HttpUtility.HtmlEncode(text);
 			const string howFound = "link with visible text '{0}'";
 			var link = Browser.FindElements(By.LinkText(text)).FirstOrDefault() ?? GetElementsByTagType("a").FirstOrDefault(x =>
-			{
-				var attribute = x.GetAttribute("innerHTML");
-				return attribute == htmlEscapedText || attribute == text;
-			});
+			                                                                                                                	{
+			                                                                                                                		string
+			                                                                                                                			attribute
+			                                                                                                                				=
+			                                                                                                                				x
+			                                                                                                                					.
+			                                                                                                                					GetAttribute
+			                                                                                                                					("innerHTML");
+			                                                                                                                		return
+			                                                                                                                			attribute ==
+			                                                                                                                			htmlEscapedText ||
+			                                                                                                                			attribute ==
+			                                                                                                                			text;
+			                                                                                                                	});
 			return new LinkWrapper(link, String.Format(howFound, text), this);
 		}
 
@@ -369,6 +376,13 @@ namespace FluentBrowserAutomation
 			return new TableWrapper(table, String.Format(howFound, id), this);
 		}
 
+		public ListWrapper ListWithId(string id)
+		{
+			const string howFound = "list with id '{0}'";
+			var list = TryGetElementByIdAndTagType(id, "ul");
+			return new ListWrapper(list, String.Format(howFound, id), this);
+		}
+
 		public IEnumerable<TableWrapper> Tables()
 		{
 			const string howFound = "type 'table'";
@@ -392,7 +406,7 @@ namespace FluentBrowserAutomation
 
 		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, int secondsToWait = 10)
 		{
-			for (var i = 0; i < secondsToWait; i++)
+			for (int i = 0; i < secondsToWait; i++)
 			{
 				try
 				{

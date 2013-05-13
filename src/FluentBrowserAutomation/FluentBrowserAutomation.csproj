@@ -88,6 +88,7 @@
     <Compile Include="Controls\Children.cs" />
     <Compile Include="Controls\ContainerWrapper.cs" />
     <Compile Include="Controls\ImageWrapper.cs" />
+    <Compile Include="Controls\ListWrapper.cs" />
     <Compile Include="Controls\MissingInputWrapper.cs" />
     <Compile Include="Controls\Properties\IAmInputThatCanBeChanged.cs" />
     <Compile Include="Controls\Properties\IAmSelectionInput.cs" />
