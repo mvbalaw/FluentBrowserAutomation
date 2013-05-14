@@ -271,20 +271,10 @@ namespace FluentBrowserAutomation
 			string htmlEscapedText = HttpUtility.HtmlEncode(text);
 			const string howFound = "link with visible text '{0}'";
 			var link = Browser.FindElements(By.LinkText(text)).FirstOrDefault() ?? GetElementsByTagType("a").FirstOrDefault(x =>
-			                                                                                                                	{
-			                                                                                                                		string
-			                                                                                                                			attribute
-			                                                                                                                				=
-			                                                                                                                				x
-			                                                                                                                					.
-			                                                                                                                					GetAttribute
-			                                                                                                                					("innerHTML");
-			                                                                                                                		return
-			                                                                                                                			attribute ==
-			                                                                                                                			htmlEscapedText ||
-			                                                                                                                			attribute ==
-			                                                                                                                			text;
-			                                                                                                                	});
+			{
+				var attribute = x.GetAttribute("innerHTML");
+				return attribute == htmlEscapedText || attribute == text || attribute.Trim() == text;
+			});
 			return new LinkWrapper(link, String.Format(howFound, text), this);
 		}
 
