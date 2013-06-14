@@ -21,6 +21,8 @@ namespace FluentBrowserAutomation
 		IEnumerable<ButtonWrapper> Buttons();
 		CheckBoxWrapper CheckBoxWithId([NotNull] string id);
 		CheckBoxWrapper CheckBoxWithLabel([NotNull] string id);
+		CheckBoxWrapper CheckBoxWithIdAndValue([NotNull] string id, [NotNull] string value);
+		CheckBoxWrapper CheckBoxWithNameAndValue([NotNull] string name, [NotNull] string value);
 		IEnumerable<CheckBoxWrapper> CheckBoxes();
 		IEnumerable<CheckBoxWrapper> CheckBoxesWithName([NotNull] string name);
 		void CloseBrowser();
@@ -110,6 +112,20 @@ namespace FluentBrowserAutomation
 		{
 			const string howFound = "checkbox with id '{0}'";
 			var checkBox = TryGetElementByIdAndInputType(id, "checkbox");
+			return new CheckBoxWrapper(checkBox, String.Format(howFound, id), this);
+		}
+
+		public CheckBoxWrapper CheckBoxWithNameAndValue(string name, string value)
+		{
+			const string howFound = "checkbox with name '{0}'";
+			var checkBox = TryGetElementByNameAndInputTypeAndValue(name, "checkbox", value);
+			return new CheckBoxWrapper(checkBox, String.Format(howFound, name), this);
+		}
+
+		public CheckBoxWrapper CheckBoxWithIdAndValue(string id, string value)
+		{
+			const string howFound = "checkbox with id '{0}'";
+			var checkBox = TryGetElementByIdAndInputTypeAndValue(id, "checkbox", value);
 			return new CheckBoxWrapper(checkBox, String.Format(howFound, id), this);
 		}
 
@@ -271,10 +287,25 @@ namespace FluentBrowserAutomation
 			string htmlEscapedText = HttpUtility.HtmlEncode(text);
 			const string howFound = "link with visible text '{0}'";
 			var link = Browser.FindElements(By.LinkText(text)).FirstOrDefault() ?? GetElementsByTagType("a").FirstOrDefault(x =>
-			{
-				var attribute = x.GetAttribute("innerHTML");
-				return attribute == htmlEscapedText || attribute == text || attribute.Trim() == text;
-			});
+			                                                                                                                	{
+			                                                                                                                		string
+			                                                                                                                			attribute
+			                                                                                                                				=
+			                                                                                                                				x
+			                                                                                                                					.
+			                                                                                                                					GetAttribute
+			                                                                                                                					("innerHTML");
+			                                                                                                                		return
+			                                                                                                                			attribute ==
+			                                                                                                                			htmlEscapedText ||
+			                                                                                                                			attribute ==
+			                                                                                                                			text ||
+			                                                                                                                			attribute
+			                                                                                                                				.
+			                                                                                                                				Trim
+			                                                                                                                				() ==
+			                                                                                                                			text;
+			                                                                                                                	});
 			return new LinkWrapper(link, String.Format(howFound, text), this);
 		}
 
@@ -466,6 +497,20 @@ namespace FluentBrowserAutomation
 		private IWebElement TryGetElementByIdAndInputType(string id, string type)
 		{
 			return Browser.FindElements(By.Id(id)).FirstOrDefault(x => x.GetAttribute("type") == type);
+		}
+
+		private IWebElement TryGetElementByIdAndInputTypeAndValue(string id, string type, string value)
+		{
+			return
+				Browser.FindElements(By.Id(id)).FirstOrDefault(
+					x => x.GetAttribute("type") == type && x.GetAttribute("value") == value);
+		}
+
+		private IWebElement TryGetElementByNameAndInputTypeAndValue(string name, string type, string value)
+		{
+			return
+				Browser.FindElements(By.Name(name)).FirstOrDefault(
+					x => x.GetAttribute("type") == type && x.GetAttribute("value") == value);
 		}
 
 		private IWebElement TryGetElementByIdAndTagType(string id, string tag)
