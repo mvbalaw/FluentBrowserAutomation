@@ -63,6 +63,7 @@ namespace FluentBrowserAutomation
 		TextBoxWrapper TextBoxWithId([NotNull] string id);
 		TextBoxWrapper TextBoxWithLabel([NotNull] string label);
 		IEnumerable<TextBoxWrapper> TextBoxes();
+		string GetHiddenValueWithId([NotNull] string id);
 		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, int secondsToWait = 10);
 	}
 
@@ -213,6 +214,12 @@ namespace FluentBrowserAutomation
 			const string howFound = "hidden input with id '{0}'";
 			var hidden = TryGetElementByIdAndInputType(id, "hidden");
 			return new TextBoxWrapper(hidden, String.Format(howFound, id), this);
+		}
+
+		public string GetHiddenValueWithId(string id)
+		{
+			var hidden = TryGetElementByIdAndInputType(id, "hidden");
+			return hidden.GetAttribute("value");
 		}
 
 		public IEnumerable<TextBoxWrapper> Hiddens()
