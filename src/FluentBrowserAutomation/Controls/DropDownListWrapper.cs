@@ -25,17 +25,18 @@ namespace FluentBrowserAutomation.Controls
 		public void Select(string text)
 		{
 			var option = OptionWithText(text);
+			var id = Id;
 			if (option.Exists().IsTrue)
 			{
 				option.Select();
-				HandleSideBySide();
+				HandleSideBySide(id);
 				return;
 			}
 			option = OptionWithValue(text);
 			if (option.Exists().IsTrue)
 			{
 				option.Select();
-				HandleSideBySide();
+				HandleSideBySide(id);
 				return;
 			}
 			throw new AssertionException(String.Format("{0} does not have option '{1}'", HowFound, text));
@@ -52,9 +53,9 @@ namespace FluentBrowserAutomation.Controls
 			return Element.FindElements(By.TagName("option")).Where(x => x.Selected).Select(x => x.Text);
 		}
 
-		private void HandleSideBySide()
+		private void HandleSideBySide(string id)
 		{
-			if (Id.Contains("ms2side"))
+			if (id.Contains("ms2side"))
 			{
 				// side by side drop down
 				var parent = Element.GetParent().GetParent();
