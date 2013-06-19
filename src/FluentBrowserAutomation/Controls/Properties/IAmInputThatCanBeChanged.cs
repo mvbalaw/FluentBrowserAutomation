@@ -41,7 +41,9 @@ namespace FluentBrowserAutomation
 			input.IsVisible().ShouldBeTrue();
 			new Actions(input.BrowserContext.Browser)
 				.MoveToElement(input.Element)
+				.Click()
 				.Perform();
+			input.Element.SendKeys("");
 			return input;
 		}
 
