@@ -90,6 +90,7 @@
     <Compile Include="Accessors\TextBase.cs" />
     <Compile Include="Controls\Children.cs" />
     <Compile Include="Controls\ContainerWrapper.cs" />
+    <Compile Include="Controls\FileUploadWrapper.cs" />
     <Compile Include="Controls\ImageWrapper.cs" />
     <Compile Include="Controls\ListWrapper.cs" />
     <Compile Include="Controls\MissingInputWrapper.cs" />

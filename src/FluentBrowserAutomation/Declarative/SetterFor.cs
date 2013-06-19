@@ -30,6 +30,10 @@ namespace FluentBrowserAutomation.Declarative
 			{
 				return new RadioOptionWrapper(control, howFound, browserContext);
 			}
+			if (control.IsFileUpload())
+			{
+				return new FileUploadWrapper(control, howFound, browserContext);
+			}
 
 			return new MissingInputWrapper(howFound, browserContext);
 		}
