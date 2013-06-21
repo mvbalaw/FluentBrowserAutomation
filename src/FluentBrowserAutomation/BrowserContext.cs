@@ -29,6 +29,7 @@ namespace FluentBrowserAutomation
 		ContainerWrapper ContainerWithId([NotNull] string id);
 		DialogHandlerWrapper Dialog([NotNull] Action action);
 		DivWrapper DivWithId([NotNull] string id);
+		IEnumerable<IWebElement> GetWebElementsWithClassName([NotNull] string className);
 		IEnumerable<DivWrapper> Divs();
 		DropDownListWrapper DropDownListWithId([NotNull] string idOfList);
 		DropDownListWrapper DropDownListWithLabel([NotNull] string label);
@@ -170,6 +171,11 @@ namespace FluentBrowserAutomation
 			const string howFound = "div with id '{0}'";
 			var div = TryGetElementByIdAndTagType(id, "div");
 			return new DivWrapper(div, String.Format(howFound, id), this);
+		}
+
+		public IEnumerable<IWebElement> GetWebElementsWithClassName(string className)
+		{
+			return TryGetElementsByClassName(className);
 		}
 
 		public IEnumerable<DivWrapper> Divs()
@@ -523,6 +529,11 @@ namespace FluentBrowserAutomation
 		private IWebElement TryGetElementByIdAndTagType(string id, string tag)
 		{
 			return Browser.FindElements(By.Id(id)).FirstOrDefault(x => x.TagName == tag);
+		}
+
+		private IEnumerable<IWebElement> TryGetElementsByClassName(string className)
+		{
+			return Browser.FindElements(By.ClassName(className));
 		}
 	}
 }
