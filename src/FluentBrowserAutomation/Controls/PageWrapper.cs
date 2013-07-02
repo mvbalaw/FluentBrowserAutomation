@@ -1,5 +1,7 @@
 using FluentBrowserAutomation.Accessors;
 
+using OpenQA.Selenium;
+
 namespace FluentBrowserAutomation.Controls
 {
 	public class PageWrapper
@@ -9,6 +11,14 @@ namespace FluentBrowserAutomation.Controls
 		public PageWrapper(IBrowserContext browserContext)
 		{
 			_browserContext = browserContext;
+		}
+
+		public void ScrollToBottom()
+		{
+			var browser = _browserContext.Browser;
+
+			const string js = "window.scrollTo(0, document.body.scrollHeight);";
+			((IJavaScriptExecutor)browser).ExecuteScript(js);
 		}
 
 		public ReadOnlyText Text()
