@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Web;
+
 using FluentAssert;
+
 using FluentBrowserAutomation.Controls;
 using FluentBrowserAutomation.Declarative;
 using FluentBrowserAutomation.Framework;
+
 using JetBrains.Annotations;
+
 using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation
@@ -20,8 +24,8 @@ namespace FluentBrowserAutomation
 		ButtonWrapper ButtonWithText([NotNull] string text);
 		IEnumerable<ButtonWrapper> Buttons();
 		CheckBoxWrapper CheckBoxWithId([NotNull] string id);
-		CheckBoxWrapper CheckBoxWithLabel([NotNull] string id);
 		CheckBoxWrapper CheckBoxWithIdAndValue([NotNull] string id, [NotNull] string value);
+		CheckBoxWrapper CheckBoxWithLabel([NotNull] string id);
 		CheckBoxWrapper CheckBoxWithNameAndValue([NotNull] string name, [NotNull] string value);
 		IEnumerable<CheckBoxWrapper> CheckBoxes();
 		IEnumerable<CheckBoxWrapper> CheckBoxesWithName([NotNull] string name);
@@ -29,11 +33,12 @@ namespace FluentBrowserAutomation
 		ContainerWrapper ContainerWithId([NotNull] string id);
 		DialogHandlerWrapper Dialog([NotNull] Action action);
 		DivWrapper DivWithId([NotNull] string id);
-		IEnumerable<IWebElement> GetWebElementsWithClassName([NotNull] string className);
 		IEnumerable<DivWrapper> Divs();
 		DropDownListWrapper DropDownListWithId([NotNull] string idOfList);
 		DropDownListWrapper DropDownListWithLabel([NotNull] string label);
 		IEnumerable<DropDownListWrapper> DropDownLists();
+		string GetHiddenValueWithId([NotNull] string id);
+		IEnumerable<IWebElement> GetWebElementsWithClassName([NotNull] string className);
 		void GoToUrl([NotNull] string url);
 		TextBoxWrapper HiddenWithId([NotNull] string id);
 		IEnumerable<TextBoxWrapper> Hiddens();
@@ -48,6 +53,7 @@ namespace FluentBrowserAutomation
 		LinkWrapper LinkWithId([NotNull] string id);
 		LinkWrapper LinkWithText([NotNull] string text);
 		IEnumerable<LinkWrapper> Links();
+		ListWrapper ListWithId([NotNull] string id);
 		INavigationControl NavigationControlWithId([NotNull] string id);
 		INavigationControl NavigationControlWithText([NotNull] string text);
 		PageWrapper Page();
@@ -59,12 +65,10 @@ namespace FluentBrowserAutomation
 		SpanWrapper SpanWithText([NotNull] string spanText);
 		IEnumerable<SpanWrapper> Spans();
 		TableWrapper TableWithId([NotNull] string id);
-		ListWrapper ListWithId([NotNull] string id);
 		IEnumerable<TableWrapper> Tables();
 		TextBoxWrapper TextBoxWithId([NotNull] string id);
 		TextBoxWrapper TextBoxWithLabel([NotNull] string label);
 		IEnumerable<TextBoxWrapper> TextBoxes();
-		string GetHiddenValueWithId([NotNull] string id);
 		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, int secondsToWait = 10);
 	}
 
@@ -237,7 +241,7 @@ namespace FluentBrowserAutomation
 
 		public BrowserContext IdOfFieldWithFocusShouldBe(string expectedId)
 		{
-			string id = Browser.SwitchTo().ActiveElement().GetAttribute("id");
+			var id = Browser.SwitchTo().ActiveElement().GetAttribute("id");
 			id.ShouldBeEqualTo(expectedId);
 			return this;
 		}
@@ -297,28 +301,16 @@ namespace FluentBrowserAutomation
 
 		public LinkWrapper LinkWithText(string text)
 		{
-			string htmlEscapedText = HttpUtility.HtmlEncode(text);
+			var htmlEscapedText = HttpUtility.HtmlEncode(text);
 			const string howFound = "link with visible text '{0}'";
-			var link = Browser.FindElements(By.LinkText(text)).FirstOrDefault() ?? GetElementsByTagType("a").FirstOrDefault(x =>
-			                                                                                                                	{
-			                                                                                                                		string
-			                                                                                                                			attribute
-			                                                                                                                				=
-			                                                                                                                				x
-			                                                                                                                					.
-			                                                                                                                					GetAttribute
-			                                                                                                                					("innerHTML");
-			                                                                                                                		return
-			                                                                                                                			attribute ==
-			                                                                                                                			htmlEscapedText ||
-			                                                                                                                			attribute ==
-			                                                                                                                			text ||
-			                                                                                                                			attribute
-			                                                                                                                				.
-			                                                                                                                				Trim
-			                                                                                                                				() ==
-			                                                                                                                			text;
-			                                                                                                                	});
+			var link = Browser.FindElements(By.LinkText(text)).FirstOrDefault()
+			           ?? GetElementsByTagType("a").FirstOrDefault(x =>
+				           {
+					           var attribute = x.GetAttribute("innerHTML");
+					           return attribute == htmlEscapedText ||
+						           attribute == text ||
+						           attribute.Trim() ==text;
+				           });
 			return new LinkWrapper(link, String.Format(howFound, text), this);
 		}
 
@@ -440,7 +432,7 @@ namespace FluentBrowserAutomation
 
 		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, int secondsToWait = 10)
 		{
-			for (int i = 0; i < secondsToWait; i++)
+			for (var i = 0; i < secondsToWait; i++)
 			{
 				try
 				{
@@ -519,16 +511,16 @@ namespace FluentBrowserAutomation
 					x => x.GetAttribute("type") == type && x.GetAttribute("value") == value);
 		}
 
+		private IWebElement TryGetElementByIdAndTagType(string id, string tag)
+		{
+			return Browser.FindElements(By.Id(id)).FirstOrDefault(x => x.TagName == tag);
+		}
+
 		private IWebElement TryGetElementByNameAndInputTypeAndValue(string name, string type, string value)
 		{
 			return
 				Browser.FindElements(By.Name(name)).FirstOrDefault(
 					x => x.GetAttribute("type") == type && x.GetAttribute("value") == value);
-		}
-
-		private IWebElement TryGetElementByIdAndTagType(string id, string tag)
-		{
-			return Browser.FindElements(By.Id(id)).FirstOrDefault(x => x.TagName == tag);
 		}
 
 		private IEnumerable<IWebElement> TryGetElementsByClassName(string className)
