@@ -1,12 +1,15 @@
 using System;
+using System.Linq;
 
 using FluentBrowserAutomation.Accessors;
+using FluentBrowserAutomation.Controls;
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 
 //// ReSharper disable CheckNamespace
 // ReSharper disable CheckNamespace
+
 namespace FluentBrowserAutomation
 // ReSharper restore CheckNamespace
 //// ReSharper restore CheckNamespace
@@ -52,10 +55,37 @@ namespace FluentBrowserAutomation
 			((IJavaScriptExecutor)browser).ExecuteScript(js);
 		}
 
-		public static ReadOnlyText Text(this IAmVisualElement element)
+		public static ReadOnlyText Text(this IAmVisualElement input)
 		{
-			var text = element.Element.Text;
-			return new ReadOnlyText(element.HowFound, text);
+			var textField = input as TextBoxWrapper;
+			if (textField != null)
+			{
+				input.Exists().ShouldBeTrue();
+				input.IsVisible().ShouldBeTrue();
+				return textField.Text();
+			}
+			var dropDown = input as DropDownListWrapper;
+			if (dropDown != null)
+			{
+				input.Exists().ShouldBeTrue();
+				input.IsVisible().ShouldBeTrue();
+				var selectedTexts = dropDown.GetSelectedTexts().ToArray();
+				if (selectedTexts.Length != 1)
+				{
+					throw new ArgumentException("drop down list " + input.HowFound + " must have exactly 1 selected value to call .Text()");
+				}
+				return new ReadOnlyText(input.HowFound, selectedTexts[0]);
+			}
+			var checkBoxOrRadio = input as IAmToggleableInput;
+			if (checkBoxOrRadio != null)
+			{
+				input.Exists().ShouldBeTrue();
+				input.IsVisible().ShouldBeTrue();
+				return new ReadOnlyText(input.HowFound, input.Element.GetAttribute("value"));
+			}
+
+			var text = input.Element.Text;
+			return new ReadOnlyText(input.HowFound, text);
 		}
 	}
 }
