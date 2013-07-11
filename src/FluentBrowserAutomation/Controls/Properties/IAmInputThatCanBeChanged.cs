@@ -9,10 +9,14 @@ using FluentBrowserAutomation.Controls;
 using OpenQA.Selenium.Interactions;
 
 //// ReSharper disable CheckNamespace
+// ReSharper disable CheckNamespace
 namespace FluentBrowserAutomation
+// ReSharper restore CheckNamespace
 //// ReSharper restore CheckNamespace
 {
+// ReSharper disable RedundantExtendsListEntry
 	public interface IAmInputThatCanBeChanged : IAmVisualElement, IHaveBasicInfo
+// ReSharper restore RedundantExtendsListEntry
 	{
 	}
 

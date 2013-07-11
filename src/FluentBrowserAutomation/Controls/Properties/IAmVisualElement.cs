@@ -6,7 +6,9 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 
 //// ReSharper disable CheckNamespace
+// ReSharper disable CheckNamespace
 namespace FluentBrowserAutomation
+// ReSharper restore CheckNamespace
 //// ReSharper restore CheckNamespace
 {
 	public interface IAmVisualElement : IHaveBasicInfo

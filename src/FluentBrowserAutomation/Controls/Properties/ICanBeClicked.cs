@@ -1,10 +1,14 @@
 using System;
 
 //// ReSharper disable CheckNamespace
+// ReSharper disable CheckNamespace
 namespace FluentBrowserAutomation
+// ReSharper restore CheckNamespace
 //// ReSharper restore CheckNamespace
 {
+// ReSharper disable RedundantExtendsListEntry
 	public interface ICanBeClicked : IAmVisualElement, IHaveBasicInfo
+// ReSharper restore RedundantExtendsListEntry
 	{
 	}
 
@@ -26,7 +30,9 @@ namespace FluentBrowserAutomation
 			element.BrowserContext.WaitUntil(x => ClickIt(element));
 		}
 
+// ReSharper disable SuggestBaseTypeForParameter
 		private static bool ClickIt(ICanBeClicked element)
+// ReSharper restore SuggestBaseTypeForParameter
 		{
 			try
 			{
