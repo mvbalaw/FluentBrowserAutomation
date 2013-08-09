@@ -7,6 +7,7 @@ using FluentBrowserAutomation.Extensions;
 using JetBrains.Annotations;
 
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace FluentBrowserAutomation.Controls
 {
@@ -24,22 +25,26 @@ namespace FluentBrowserAutomation.Controls
 
 		public void Select(string text)
 		{
-			var option = OptionWithText(text);
+			var selector = new SelectElement(Element);
 			var id = Id;
-			if (option.Exists().IsTrue)
+
+			try
 			{
-				option.Select();
+				selector.SelectByText(text);
 				HandleSideBySide(id);
-				return;
 			}
-			option = OptionWithValue(text);
-			if (option.Exists().IsTrue)
+			catch (NoSuchElementException)
 			{
-				option.Select();
-				HandleSideBySide(id);
-				return;
+				try
+				{
+					selector.SelectByValue(text);
+					HandleSideBySide(id);
+				}
+				catch (NoSuchElementException)
+				{
+					throw new AssertionException(String.Format("{0} does not have option '{1}'", HowFound, text));
+				}
 			}
-			throw new AssertionException(String.Format("{0} does not have option '{1}'", HowFound, text));
 		}
 
 		public string GetSelectedText()
