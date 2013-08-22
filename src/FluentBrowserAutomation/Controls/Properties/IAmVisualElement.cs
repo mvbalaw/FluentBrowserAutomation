@@ -1,18 +1,16 @@
 using System;
 using System.Linq;
 
+using FluentAssert;
+
 using FluentBrowserAutomation.Accessors;
 using FluentBrowserAutomation.Controls;
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 
-//// ReSharper disable CheckNamespace
-// ReSharper disable CheckNamespace
-
+// ReSharper disable once CheckNamespace
 namespace FluentBrowserAutomation
-// ReSharper restore CheckNamespace
-//// ReSharper restore CheckNamespace
 {
 	public interface IAmVisualElement : IHaveBasicInfo
 	{
@@ -53,6 +51,12 @@ namespace FluentBrowserAutomation
 			}
 			var js = String.Format("window.scroll({0}, {1})", elementPosition.X, yPosition);
 			((IJavaScriptExecutor)browser).ExecuteScript(js);
+		}
+
+		public static IAmVisualElement ShouldHaveFocus(this IAmVisualElement input)
+		{
+			input.BrowserContext.Browser.SwitchTo().ActiveElement().ShouldBeEqualTo(input.Element);
+			return input;
 		}
 
 		public static ReadOnlyText Text(this IAmVisualElement input)

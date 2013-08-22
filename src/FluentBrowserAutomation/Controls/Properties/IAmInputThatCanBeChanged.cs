@@ -176,12 +176,6 @@ namespace FluentBrowserAutomation
 			return input;
 		}
 
-		public static IAmInputThatCanBeChanged ShouldHaveFocus(this IAmInputThatCanBeChanged input)
-		{
-			input.BrowserContext.Browser.SwitchTo().ActiveElement().ShouldBeEqualTo(input.Element);
-			return input;
-		}
-
 		public static IAmInputThatCanBeChanged ShouldHaveOption(this IAmInputThatCanBeChanged input, string optionText)
 		{
 			var dropDown = input as DropDownListWrapper;
