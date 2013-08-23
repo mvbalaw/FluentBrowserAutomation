@@ -52,6 +52,7 @@ namespace FluentBrowserAutomation
 		IEnumerable<LabelWrapper> Labels();
 		LinkWrapper LinkWithId([NotNull] string id);
 		LinkWrapper LinkWithText([NotNull] string text);
+		IEnumerable<LinkWrapper> LinksWithText(string text);
 		IEnumerable<LinkWrapper> Links();
 		ListWrapper ListWithId([NotNull] string id);
 		INavigationControl NavigationControlWithId([NotNull] string id);
@@ -301,17 +302,10 @@ namespace FluentBrowserAutomation
 
 		public LinkWrapper LinkWithText(string text)
 		{
-			var htmlEscapedText = HttpUtility.HtmlEncode(text);
 			const string howFound = "link with visible text '{0}'";
-			var link = Browser.FindElements(By.LinkText(text)).FirstOrDefault()
-			           ?? GetElementsByTagType("a").FirstOrDefault(x =>
-				           {
-					           var attribute = x.GetAttribute("innerHTML");
-					           return attribute == htmlEscapedText ||
-						           attribute == text ||
-						           attribute.Trim() ==text;
-				           });
-			return new LinkWrapper(link, String.Format(howFound, text), this);
+			var link = LinksWithText(text).FirstOrDefault() ??
+				new LinkWrapper(null, String.Format(howFound, text), this);
+			return link;
 		}
 
 		public IEnumerable<LinkWrapper> Links()
@@ -497,6 +491,22 @@ namespace FluentBrowserAutomation
 		private IEnumerable<IWebElement> GetInputsByInputType(string type)
 		{
 			return GetInputs().Where(x => x.GetAttribute("type") == type);
+		}
+
+		public IEnumerable<LinkWrapper> LinksWithText(string text)
+		{
+			var htmlEscapedText = HttpUtility.HtmlEncode(text);
+			const string howFound = "link with visible text '{0}'";
+			var items = Browser.FindElements(By.LinkText(text))
+				.Concat(GetElementsByTagType("a").Where(x =>
+				{
+					var attribute = x.GetAttribute("innerHTML");
+					return attribute == htmlEscapedText ||
+						attribute == text ||
+						attribute.Trim() == text;
+				}))
+				.Select(link => new LinkWrapper(link, String.Format(howFound, text), this));
+			return items;
 		}
 
 		private IWebElement TryGetElementByIdAndInputType(string id, string type)
