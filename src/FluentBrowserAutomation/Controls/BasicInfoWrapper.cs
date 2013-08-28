@@ -4,6 +4,9 @@ namespace FluentBrowserAutomation.Controls
 {
 	public class BasicInfoWrapper : IHaveBasicInfo
 	{
+		private string _id;
+		private string _name;
+
 		public BasicInfoWrapper(IWebElement element, string howFound, IBrowserContext browserContext)
 		{
 			Element = element;
@@ -14,24 +17,33 @@ namespace FluentBrowserAutomation.Controls
 		public IBrowserContext BrowserContext { get; private set; }
 
 		public IWebElement Element { get; private set; }
+
 		public string Id
 		{
 			get
 			{
-				this.Exists().ShouldBeTrue();
-				return Element.GetAttribute("id");
+				if (_id == null)
+				{
+					this.Exists().ShouldBeTrue();
+					_id = Element.GetAttribute("id");
+				}
+				return _id;
 			}
 		}
-		
+
 		public string Name
 		{
 			get
 			{
-				this.Exists().ShouldBeTrue();
-				return Element.GetAttribute("name");
+				if (_name == null)
+				{
+					this.Exists().ShouldBeTrue();
+					_name = Element.GetAttribute("name");
+				}
+				return _name;
 			}
 		}
-		
+
 		public string HowFound { get; private set; }
 	}
 }

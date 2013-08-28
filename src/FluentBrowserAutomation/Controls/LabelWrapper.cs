@@ -4,6 +4,8 @@ namespace FluentBrowserAutomation.Controls
 {
 	public class LabelWrapper : BasicInfoWrapper, IAmVisualElement
 	{
+		private string _for;
+
 		public LabelWrapper(IWebElement label, string howFound, IBrowserContext browserContext)
 			: base(label, howFound, browserContext)
 		{
@@ -11,7 +13,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public string For
 		{
-			get { return Element.GetAttribute("for"); }
+			get { return _for ?? (_for = Element.GetAttribute("for")); }
 		}
 	}
 }

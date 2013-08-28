@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -234,7 +235,9 @@ namespace FluentBrowserAutomation
 
 		public static IAmInputThatCanBeChanged WaitUntil(this IAmInputThatCanBeChanged input, Func<IAmInputThatCanBeChanged, bool> func, int secondsToWait = 10)
 		{
-			for (var i = 0; i < secondsToWait; i++)
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+			do
 			{
 				try
 				{
@@ -243,12 +246,12 @@ namespace FluentBrowserAutomation
 						return input;
 					}
 				}
-				catch (Exception exception)
+// ReSharper disable once EmptyGeneralCatchClause
+				catch
 				{
-					Console.WriteLine(exception.Message + " -- waiting 1 sec");
 				}
-				Thread.Sleep(TimeSpan.FromSeconds(1));
-			}
+				Thread.Sleep(TimeSpan.FromSeconds(.25));
+			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
 			throw new AssertionException("state being waited upon never happened.");
 		}
 	}

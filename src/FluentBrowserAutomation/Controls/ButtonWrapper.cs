@@ -5,6 +5,8 @@ namespace FluentBrowserAutomation.Controls
 {
 	public class ButtonWrapper : BasicInfoWrapper, INavigationControl
 	{
+		private string _text;
+
 		public ButtonWrapper(IWebElement button, string howFound, IBrowserContext browser)
 			: base(button, howFound, browser)
 		{
@@ -12,7 +14,14 @@ namespace FluentBrowserAutomation.Controls
 
 		public string Text
 		{
-			get { return new ReadOnlyText("value of " + HowFound, Element.GetAttribute("value")); }
+			get
+			{
+				if (_text == null)
+				{
+					_text = Element.GetAttribute("value");
+				}
+				return new ReadOnlyText("value of " + HowFound, _text);
+			}
 		}
 	}
 }

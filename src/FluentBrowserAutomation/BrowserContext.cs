@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -110,9 +111,10 @@ namespace FluentBrowserAutomation
 		public IEnumerable<ButtonWrapper> Buttons()
 		{
 			const string howFound = "type 'button'";
-			var submits = GetInputsByInputType("submit");
-			var buttons = GetInputsByInputType("button");
-			return submits.Concat(buttons).Select(x => new ButtonWrapper(x, howFound, this));
+			return from input in GetInputs().AsParallel() 
+				   let type = input.GetAttribute("type") 
+				   where @type.Equals("submit") || @type.Equals("button") 
+				   select new ButtonWrapper(input, howFound, this);
 		}
 
 		public CheckBoxWrapper CheckBoxWithId(string id)
@@ -426,7 +428,9 @@ namespace FluentBrowserAutomation
 
 		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, int secondsToWait = 10)
 		{
-			for (var i = 0; i < secondsToWait; i++)
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+			do
 			{
 				try
 				{
@@ -435,12 +439,12 @@ namespace FluentBrowserAutomation
 						return this;
 					}
 				}
-				catch (Exception exception)
+// ReSharper disable once EmptyGeneralCatchClause
+				catch
 				{
-					Console.WriteLine(exception.Message + " -- waiting 1 sec");
 				}
-				Thread.Sleep(TimeSpan.FromSeconds(1));
-			}
+				Thread.Sleep(TimeSpan.FromSeconds(.25));
+			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
 			throw new AssertionException("state being waited upon never happened.");
 		}
 
@@ -480,17 +484,17 @@ namespace FluentBrowserAutomation
 
 		private IEnumerable<IWebElement> GetElementsByTagType(string tag)
 		{
-			return Browser.FindElements(By.TagName(tag));
+			return Browser.FindElements(By.TagName(tag)).AsParallel();
 		}
 
 		private IEnumerable<IWebElement> GetInputs()
 		{
-			return Browser.FindElements(By.TagName("input"));
+			return GetElementsByTagType("input");
 		}
 
 		private IEnumerable<IWebElement> GetInputsByInputType(string type)
 		{
-			return GetInputs().Where(x => x.GetAttribute("type") == type);
+			return GetInputs().AsParallel().Where(x => x.GetAttribute("type").Equals(type));
 		}
 
 		public IEnumerable<LinkWrapper> LinksWithText(string text)
@@ -498,7 +502,7 @@ namespace FluentBrowserAutomation
 			var htmlEscapedText = HttpUtility.HtmlEncode(text);
 			const string howFound = "link with visible text '{0}'";
 			var items = Browser.FindElements(By.LinkText(text))
-				.Concat(GetElementsByTagType("a").Where(x =>
+				.Concat(GetElementsByTagType("a").AsParallel().Where(x =>
 				{
 					var attribute = x.GetAttribute("innerHTML");
 					return attribute == htmlEscapedText ||
@@ -517,7 +521,7 @@ namespace FluentBrowserAutomation
 		private IWebElement TryGetElementByIdAndInputTypeAndValue(string id, string type, string value)
 		{
 			return
-				Browser.FindElements(By.Id(id)).FirstOrDefault(
+				Browser.FindElements(By.Id(id)).AsParallel().FirstOrDefault(
 					x => x.GetAttribute("type") == type && x.GetAttribute("value") == value);
 		}
 
@@ -529,7 +533,7 @@ namespace FluentBrowserAutomation
 		private IWebElement TryGetElementByNameAndInputTypeAndValue(string name, string type, string value)
 		{
 			return
-				Browser.FindElements(By.Name(name)).FirstOrDefault(
+				Browser.FindElements(By.Name(name)).AsParallel().FirstOrDefault(
 					x => x.GetAttribute("type") == type && x.GetAttribute("value") == value);
 		}
 
