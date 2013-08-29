@@ -5,7 +5,7 @@ using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Controls
 {
-	public class TableRowWrapper : BasicInfoWrapper
+	public class TableRowWrapper : BasicInfoWrapper, IAmVisualElement
 	{
 		public TableRowWrapper(IWebElement tableRow, string howFound, IBrowserContext browserContext)
 			: base(tableRow, howFound, browserContext)
