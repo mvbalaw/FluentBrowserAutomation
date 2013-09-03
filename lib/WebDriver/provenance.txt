@@ -1,2 +1,8 @@
-source: http://docs.seleniumhq.org/docs/03_webdriver.jsp
+selenium: 
+
+http://docs.seleniumhq.org/download/
+
+chromedriver:
+
+https://code.google.com/p/chromedriver/downloads/list
 
