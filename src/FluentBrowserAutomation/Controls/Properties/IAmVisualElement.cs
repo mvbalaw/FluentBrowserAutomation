@@ -24,6 +24,13 @@ namespace FluentBrowserAutomation
 			action.MoveToElement(element.Element).Perform();
 		}
 
+		public static BooleanState HasFocus(this IAmVisualElement input)
+		{
+			var elementWithFocus = input.BrowserContext.Browser.SwitchTo().ActiveElement();
+			var state = ReferenceEquals(elementWithFocus, input.Element);
+			return new BooleanState("Expected focus to be on " + input.HowFound + " but was not.", "Expected focus NOT to be on " + input.HowFound + " but was.", () => state);
+		}
+
 		public static void MoveMouseToIt(this IAmVisualElement element)
 		{
 			element.ScrollToIt();
