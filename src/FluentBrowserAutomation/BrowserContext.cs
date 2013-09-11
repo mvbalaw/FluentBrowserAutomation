@@ -71,7 +71,7 @@ namespace FluentBrowserAutomation
 		TextBoxWrapper TextBoxWithId([NotNull] string id);
 		TextBoxWrapper TextBoxWithLabel([NotNull] string label);
 		IEnumerable<TextBoxWrapper> TextBoxes();
-		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, int secondsToWait = 10);
+		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, int secondsToWait = 10, string errorMessage = null);
 	}
 
 	public class BrowserContext : IBrowserContext
@@ -426,7 +426,7 @@ namespace FluentBrowserAutomation
 			return textBoxes.Concat(textAreas);
 		}
 
-		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, int secondsToWait = 10)
+		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, int secondsToWait = 10, string errorMessage = null)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -445,13 +445,14 @@ namespace FluentBrowserAutomation
 				}
 				Thread.Sleep(TimeSpan.FromSeconds(.25));
 			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
-			throw new AssertionException("state being waited upon never happened.");
+			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
 		}
 
 		public ContainerWrapper ContainerWithId(string id)
 		{
 			const string howFound = "container with id '{0}'";
 			var container = TryGetElementByIdAndTagType(id, "div");
+// ReSharper disable once ConvertIfStatementToNullCoalescingExpression
 			if (container == null)
 			{
 				container = TryGetElementByIdAndTagType(id, "span");

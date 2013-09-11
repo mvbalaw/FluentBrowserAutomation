@@ -1,10 +1,7 @@
 ﻿using System;
 
-//// ReSharper disable CheckNamespace
-// ReSharper disable CheckNamespace
+// ReSharper disable once CheckNamespace
 namespace FluentBrowserAutomation
-// ReSharper restore CheckNamespace
-//// ReSharper restore CheckNamespace
 {
 	public interface IPageWrapper
 	{
@@ -15,9 +12,15 @@ namespace FluentBrowserAutomation
 	{
 		public static T UiState<T>(this T pageWrapper, params Action<IBrowserContext>[] funcs) where T : IPageWrapper
 		{
-			foreach (var func in funcs)
+			for (var index = 0; index < funcs.Length; index++)
 			{
-				func(pageWrapper.BrowserContext);
+				var func = funcs[index];
+				var func1 = func;
+				pageWrapper.BrowserContext.WaitUntil(x =>
+				{
+					func1(pageWrapper.BrowserContext);
+					return true;
+				}, errorMessage:"UiState action " + (index + 1) + " of " + funcs.Length + " failed.");
 			}
 			return pageWrapper;
 		}
