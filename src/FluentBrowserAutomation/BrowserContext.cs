@@ -430,6 +430,7 @@ namespace FluentBrowserAutomation
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
+			string exceptionMessage = null;
 			do
 			{
 				try
@@ -440,12 +441,13 @@ namespace FluentBrowserAutomation
 					}
 				}
 // ReSharper disable once EmptyGeneralCatchClause
-				catch
+				catch (Exception exception)
 				{
+					exceptionMessage = exception.Message;
 				}
 				Thread.Sleep(TimeSpan.FromSeconds(.25));
 			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
-			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
+			throw new AssertionException(exceptionMessage ?? errorMessage ?? "state being waited upon never happened.");
 		}
 
 		public ContainerWrapper ContainerWithId(string id)
