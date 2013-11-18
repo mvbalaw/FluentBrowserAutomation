@@ -12,6 +12,11 @@ namespace FluentBrowserAutomation
 	{
 		public static T UiState<T>(this T pageWrapper, params Action<IBrowserContext>[] funcs) where T : IPageWrapper
 		{
+			return UiState(pageWrapper, null, funcs);
+		}
+
+		public static T UiState<T>(this T pageWrapper, string activityDescription = null, params Action<IBrowserContext>[] funcs) where T : IPageWrapper
+		{
 			for (var index = 0; index < funcs.Length; index++)
 			{
 				var func = funcs[index];
@@ -20,7 +25,7 @@ namespace FluentBrowserAutomation
 				{
 					func1(pageWrapper.BrowserContext);
 					return true;
-				}, errorMessage:"UiState action " + (index + 1) + " of " + funcs.Length + " failed.");
+				}, errorMessage: "UiState action " + (index + 1) + " of " + (activityDescription??funcs.Length.ToString()) + " failed.");
 			}
 			return pageWrapper;
 		}
