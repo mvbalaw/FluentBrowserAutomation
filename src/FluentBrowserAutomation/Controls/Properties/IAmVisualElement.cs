@@ -37,7 +37,7 @@ namespace FluentBrowserAutomation
 			element.Focus();
 		}
 
-		public static void ScrollToIt(this IAmVisualElement element)
+		public static void ScrollToIt(this IAmVisualElement element, int yOffset = 0)
 		{
 			var browser = element.BrowserContext.Browser;
 			var windowSize = browser.Manage().Window.Size;
@@ -46,7 +46,7 @@ namespace FluentBrowserAutomation
 
 			var elementPosition = ((ILocatable)element.Element).LocationOnScreenOnceScrolledIntoView;
 			var offset = windowSize.Height / 4;
-			var yOffset = currentScreenLocation.Y < elementPosition.Y ? offset : -offset;
+			yOffset += currentScreenLocation.Y < elementPosition.Y ? offset : -offset;
 			var yPosition = elementPosition.Y + yOffset;
 			if (yPosition < 0)
 			{
