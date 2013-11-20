@@ -69,6 +69,7 @@ namespace FluentBrowserAutomation
 		IAmInputThatCanBeChanged Set([NotNull] string labelText);
 		SpanWrapper SpanWithId([NotNull] string id);
 		SpanWrapper SpanWithText([NotNull] string spanText);
+		TextBoxWrapper TextBoxWithFocus();
 		IEnumerable<SpanWrapper> Spans();
 		IEnumerable<SpanWrapper> SpansWithClassName([NotNull] string className);
 		TableWrapper TableWithId([NotNull] string id);
@@ -477,6 +478,12 @@ namespace FluentBrowserAutomation
 		public SpanWrapper SpanWithText(string spanText)
 		{
 			return Spans().First(x => x.Text() == spanText);
+		}
+
+		public TextBoxWrapper TextBoxWithFocus()
+		{
+			var active = Browser.SwitchTo().ActiveElement();
+			return new TextBoxWrapper(active, "textbox with focus", this);
 		}
 
 		public IEnumerable<SpanWrapper> Spans()
