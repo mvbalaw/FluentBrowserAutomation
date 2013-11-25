@@ -45,6 +45,13 @@ namespace FluentBrowserAutomation.Declarative
 			return GetInputElement(browserContext, control, howFound);
 		}
 
+		public static IAmInputThatCanBeChanged InputWithClassName(this IBrowserContext browserContext, string className)
+		{
+			var control = browserContext.Browser.FindElements(By.ClassName(className)).FirstOrDefault();
+			var howFound = String.Format("Input with class '{0}'", className);
+			return GetInputElement(browserContext, control, howFound);
+		}
+
 		public static IAmInputThatCanBeChanged InputWithLabel(this IBrowserContext browserContext, string labelText)
 		{
 			var labels = browserContext.Labels();

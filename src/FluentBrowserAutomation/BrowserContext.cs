@@ -49,6 +49,7 @@ namespace FluentBrowserAutomation
 		IEnumerable<ButtonWrapper> ImageButtons();
 		ImageWrapper ImageWithId([NotNull] string id);
 		IAmInputThatCanBeChanged InputWithId([NotNull] string id);
+		IAmInputThatCanBeChanged InputWithClassName([NotNull] string className);
 		IAmInputThatCanBeChanged InputWithLabel([NotNull] string label);
 		IAmInputThatCanBeChanged InputWithValue([NotNull] string value);
 		LabelWrapper LabelWithId([NotNull] string id);
@@ -315,6 +316,12 @@ namespace FluentBrowserAutomation
 		{
 			_browserManager.Trace("Getting input with id '" + id + "'");
 			return SetterFor.InputWithId(this, id);
+		}
+		
+		public IAmInputThatCanBeChanged InputWithClassName(string className)
+		{
+			_browserManager.Trace("Getting input with class name '" + className + "'");
+			return SetterFor.InputWithClassName(this, className);
 		}
 
 		public IAmInputThatCanBeChanged InputWithLabel(string label)
