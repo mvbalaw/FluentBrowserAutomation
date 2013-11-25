@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 using FluentAssert;
 
@@ -233,26 +232,11 @@ namespace FluentBrowserAutomation
 			return input;
 		}
 
-		public static IAmInputThatCanBeChanged WaitUntil(this IAmInputThatCanBeChanged input, Func<IAmInputThatCanBeChanged, bool> func, int secondsToWait = 10)
+		[DebuggerStepThrough]
+		public static IAmInputThatCanBeChanged WaitUntil(this IAmInputThatCanBeChanged input, Func<IAmInputThatCanBeChanged, bool> func, int secondsToWait = 10, string errorMessage = null)
 		{
-			var stopwatch = new Stopwatch();
-			stopwatch.Start();
-			do
-			{
-				try
-				{
-					if (func(input))
-					{
-						return input;
-					}
-				}
-// ReSharper disable once EmptyGeneralCatchClause
-				catch
-				{
-				}
-				Thread.Sleep(TimeSpan.FromSeconds(.25));
-			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
-			throw new AssertionException("state being waited upon never happened.");
+			input.BrowserContext.WaitUntil(x => func(input), secondsToWait, errorMessage);
+			return input;
 		}
 	}
 }
