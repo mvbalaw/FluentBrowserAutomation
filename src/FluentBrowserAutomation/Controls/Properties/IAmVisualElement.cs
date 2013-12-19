@@ -8,6 +8,7 @@ using FluentBrowserAutomation.Controls;
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Remote;
 
 // ReSharper disable once CheckNamespace
 namespace FluentBrowserAutomation
@@ -40,21 +41,12 @@ namespace FluentBrowserAutomation
 		public static void ScrollToIt(this IAmVisualElement element, int yOffset = 0)
 		{
 			var browser = element.BrowserContext.Browser;
-			var windowSize = browser.Manage().Window.Size;
 
-			var currentScreenLocation = ((ILocatable)browser.SwitchTo().ActiveElement()).LocationOnScreenOnceScrolledIntoView;
-
-			var elementPosition = ((ILocatable)element.Element).LocationOnScreenOnceScrolledIntoView;
-			var offset = windowSize.Height / 4;
-			yOffset += currentScreenLocation.Y < elementPosition.Y ? offset : -offset;
+			var elementPosition = ((RemoteWebElement)element.Element).LocationOnScreenOnceScrolledIntoView;
 			var yPosition = elementPosition.Y + yOffset;
 			if (yPosition < 0)
 			{
 				yPosition = 0;
-			}
-			else if (yPosition > windowSize.Height)
-			{
-				yPosition = windowSize.Height;
 			}
 			var js = String.Format("window.scroll({0}, {1})", elementPosition.X, yPosition);
 			((IJavaScriptExecutor)browser).ExecuteScript(js);
