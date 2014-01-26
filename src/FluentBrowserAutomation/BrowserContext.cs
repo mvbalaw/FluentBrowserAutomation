@@ -101,16 +101,22 @@ namespace FluentBrowserAutomation
 		public ButtonWrapper ButtonWithText(string text)
 		{
 			const string howFound = "button with visible text '{0}'";
-			var button = Buttons().FirstOrDefault(x => x.Element.GetAttribute("value") == text);
+			var button = Buttons().FirstOrDefault(x =>
+			{
+				var buttonText = x.Element.TagName == "button" ? x.Element.Text : x.Element.GetAttribute("value");
+				return buttonText == text;
+			});
 			return new ButtonWrapper(button == null ? null : button.Element, String.Format(howFound, text), this);
 		}
 
 		public IEnumerable<ButtonWrapper> Buttons()
 		{
 			const string howFound = "type 'button'";
-			return from input in GetInputs().AsParallel()
-				where IsButton(input)
-				select new ButtonWrapper(input, howFound, this);
+			var inputWrappers = GetInputs().Where(IsButton).Select(input => new ButtonWrapper(input, howFound, this)).ToList();
+			var elementsByTagType = GetElementsByTagType("button");
+			var buttonWrappers = elementsByTagType.Select(button => new ButtonWrapper(button, howFound, this)).ToList();
+			inputWrappers.AddRange(buttonWrappers);
+			return inputWrappers;
 		}
 
 		public IEnumerable<ButtonWrapper> ButtonsWithClassName(string className)

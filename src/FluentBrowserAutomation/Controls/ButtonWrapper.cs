@@ -18,7 +18,7 @@ namespace FluentBrowserAutomation.Controls
 			{
 				if (_text == null)
 				{
-					_text = Element.GetAttribute("value");
+					_text = Element.TagName == "button" ? Element.Text : Element.GetAttribute("value");
 				}
 				return new ReadOnlyText("value of " + HowFound, _text);
 			}
