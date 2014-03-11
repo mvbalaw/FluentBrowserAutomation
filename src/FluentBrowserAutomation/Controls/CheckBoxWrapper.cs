@@ -21,7 +21,13 @@ namespace FluentBrowserAutomation.Controls
 			this.Exists().ShouldBeTrue();
 			return new BooleanState(HowFound + " should have been checked but was not",
 				HowFound + " should not have been checked but was",
-				() => Element.Selected, value => this.Click());
+				() => Element.Selected, value =>
+				{
+					if (Element.Selected != value)
+					{
+						this.Click();
+					}
+				} );
 		}
 	}
 }
