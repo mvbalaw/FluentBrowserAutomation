@@ -125,6 +125,18 @@ namespace FluentBrowserAutomation
 			return input;
 		}
 
+		public static IAmInputThatCanBeChanged SelectedOptionValueShouldBeEqualTo(this IAmInputThatCanBeChanged input, string value)
+		{
+			var dropDown = input as DropDownListWrapper;
+			if (dropDown == null)
+			{
+				throw new AssertionException(input.HowFound + " is not a drop down list.");
+			}
+			var selectedValues = dropDown.GetSelectedValues().ToArray();
+			selectedValues.Contains(value).ShouldBeTrue("Selected value of " + dropDown.HowFound + " should be '" + value + "' but is/are '" + String.Join(", ", selectedValues) + "'");
+			return input;
+		}
+
 		public static IAmInputThatCanBeChanged SetTo(this IAmInputThatCanBeChanged input, string text)
 		{
 			if (input is IAmTextInput)

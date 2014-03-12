@@ -18,35 +18,6 @@ namespace FluentBrowserAutomation.Controls
 		{
 		}
 
-		public IEnumerable<OptionWrapper> Options
-		{
-			get { return Element.FindElements(By.TagName("option")).Select(x => new OptionWrapper(x, "", this, BrowserContext)); }
-		}
-
-		public void Select(string text)
-		{
-			var selector = new SelectElement(Element);
-			var id = Id;
-
-			try
-			{
-				selector.SelectByText(text);
-				HandleSideBySide(id);
-			}
-			catch (NoSuchElementException)
-			{
-				try
-				{
-					selector.SelectByValue(text);
-					HandleSideBySide(id);
-				}
-				catch (NoSuchElementException)
-				{
-					throw new AssertionException(String.Format("{0} does not have option '{1}'", HowFound, text));
-				}
-			}
-		}
-
 		public string GetSelectedText()
 		{
 			var selectedOption = Element.FindElements(By.TagName("option")).FirstOrDefault(x => x.Selected);
@@ -58,9 +29,14 @@ namespace FluentBrowserAutomation.Controls
 			return Element.FindElements(By.TagName("option")).Where(x => x.Selected).Select(x => x.Text);
 		}
 
+		public IEnumerable<string> GetSelectedValues()
+		{
+			return Element.FindElements(By.TagName("option")).Where(x => x.Selected).Select(x => x.GetAttribute("value"));
+		}
+
 		private void HandleSideBySide(string id)
 		{
-			if (id.Contains("ms2side"))
+			if (IsSideBySide(id))
 			{
 				// side by side drop down
 				var parent = Element.GetParent().GetParent();
@@ -69,6 +45,11 @@ namespace FluentBrowserAutomation.Controls
 				moveToRightPseudoButton.Click(); // sets focus
 				moveToRightPseudoButton.Click();
 			}
+		}
+
+		private static bool IsSideBySide(string id)
+		{
+			return id.Contains("ms2side");
 		}
 
 		public OptionWrapper OptionWithText([NotNull] string text)
@@ -103,6 +84,49 @@ namespace FluentBrowserAutomation.Controls
 			var options = Element.FindElements(By.TagName("option"));
 			var option = options.FirstOrDefault(x => x.GetAttribute("value") == value);
 			return new OptionWrapper(option, String.Format(optionWithValue, value), this, browserContext);
+		}
+
+		public void Select(string text)
+		{
+			Select(text, true);
+		}
+
+		public void Select(string text, bool verifySelected)
+		{
+			var selector = new SelectElement(Element);
+			var id = Id;
+
+			try
+			{
+				selector.SelectByText(text);
+				HandleSideBySide(id);
+				if (verifySelected)
+				{
+					BrowserContext.WaitUntil(x => x.DropDownListWithId(id + (IsSideBySide(id) ? "__dx" : "")).GetSelectedTexts().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+				}
+			}
+			catch (NoSuchElementException)
+			{
+				try
+				{
+					selector.SelectByValue(text);
+					HandleSideBySide(id);
+
+					if (verifySelected)
+					{
+						BrowserContext.WaitUntil(x => x.DropDownListWithId(id + (IsSideBySide(id) ? "__dx" : "")).GetSelectedValues().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+					}
+				}
+				catch (NoSuchElementException)
+				{
+					throw new AssertionException(String.Format("{0} does not have option '{1}'", HowFound, text));
+				}
+			}
+		}
+
+		public IEnumerable<OptionWrapper> Options
+		{
+			get { return Element.FindElements(By.TagName("option")).Select(x => new OptionWrapper(x, "", this, BrowserContext)); }
 		}
 	}
 }
