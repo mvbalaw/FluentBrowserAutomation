@@ -16,7 +16,7 @@ namespace FluentBrowserAutomation.Accessors
 			_howFound = howFound;
 		}
 
-		protected string Text { get; set; }
+		internal string Text { get; set; }
 
 		public IReadOnlyBooleanState Contains([NotNull] string containedText)
 		{

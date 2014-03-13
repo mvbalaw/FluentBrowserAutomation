@@ -7,13 +7,13 @@ namespace FluentBrowserAutomation.Controls
 {
 	public class OptionWrapper : BasicInfoWrapper
 	{
-		private readonly DropDownListWrapper _parentDropDown;
-
 		public OptionWrapper(IWebElement option, string howFound, DropDownListWrapper parentDropDown, IBrowserContext browserContext)
 			: base(option, howFound, browserContext)
 		{
 			_parentDropDown = parentDropDown;
 		}
+
+		private readonly DropDownListWrapper _parentDropDown;
 
 		public void Select()
 		{

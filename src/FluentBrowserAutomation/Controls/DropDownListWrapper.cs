@@ -13,6 +13,10 @@ namespace FluentBrowserAutomation.Controls
 {
 	public class DropDownListWrapper : BasicInfoWrapper, ICouldBeDisabled, IAmInputThatCanBeChanged, IAmSelectionInput, INeedFocus
 	{
+		private const string SideBySideIdDestinationSuffix = "__dx";
+		private const string SideBySideIdMarker = "ms2side";
+		private const string SideBySideIdSourceSuffix = "__sx";
+
 		public DropDownListWrapper(IWebElement dropDownList, string howFound, IBrowserContext browserContext)
 			: base(dropDownList, howFound, browserContext)
 		{
@@ -34,22 +38,27 @@ namespace FluentBrowserAutomation.Controls
 			return Element.FindElements(By.TagName("option")).Where(x => x.Selected).Select(x => x.GetAttribute("value"));
 		}
 
-		private void HandleSideBySide(string id)
+		private void HandleSideBySide(string id, string text, bool verifySelected)
 		{
-			if (IsSideBySide(id))
+			var sourceDdl = BrowserContext.DropDownListWithId(id + SideBySideIdMarker + SideBySideIdSourceSuffix);
+			sourceDdl.Select(text, verifySelected);
+
+			// side by side drop down
+			var parent = sourceDdl.Element.GetParent().GetParent();
+			var paraButtons = parent.FindElements(By.TagName("p"));
+			var moveToRightPseudoButton = paraButtons.First(x => x.Text.Equals("›")); // note: › not >
+			moveToRightPseudoButton.Click(); // sets focus
+			moveToRightPseudoButton.Click();
+
+			if (verifySelected)
 			{
-				// side by side drop down
-				var parent = Element.GetParent().GetParent();
-				var paraButtons = parent.FindElements(By.TagName("p"));
-				var moveToRightPseudoButton = paraButtons.First(x => x.Text.Equals("›")); // note: › not >
-				moveToRightPseudoButton.Click(); // sets focus
-				moveToRightPseudoButton.Click();
+				BrowserContext.WaitUntil(x => x.DropDownListWithId(id + SideBySideIdMarker + SideBySideIdDestinationSuffix).Options.Any(y => text.Equals(y.Text.Text) || text.Equals(y.Value.Text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
 			}
 		}
 
-		private static bool IsSideBySide(string id)
+		private bool HasSideBySide(string id)
 		{
-			return id.Contains("ms2side");
+			return BrowserContext.DropDownListWithId(id + SideBySideIdMarker + SideBySideIdSourceSuffix).Exists().IsTrue;
 		}
 
 		public OptionWrapper OptionWithText([NotNull] string text)
@@ -98,23 +107,36 @@ namespace FluentBrowserAutomation.Controls
 
 			try
 			{
-				selector.SelectByText(text);
-				HandleSideBySide(id);
-				if (verifySelected)
+				if (HasSideBySide(id))
 				{
-					BrowserContext.WaitUntil(x => x.DropDownListWithId(id + (IsSideBySide(id) ? "__dx" : "")).GetSelectedTexts().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+					HandleSideBySide(id, text, verifySelected);
+					// verification is handled in the recursion
+				}
+				else
+				{
+					selector.SelectByText(text);
+					if (verifySelected)
+					{
+						BrowserContext.WaitUntil(x => x.DropDownListWithId(id).GetSelectedTexts().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+					}
 				}
 			}
 			catch (NoSuchElementException)
 			{
 				try
 				{
-					selector.SelectByValue(text);
-					HandleSideBySide(id);
-
-					if (verifySelected)
+					if (HasSideBySide(id))
 					{
-						BrowserContext.WaitUntil(x => x.DropDownListWithId(id + (IsSideBySide(id) ? "__dx" : "")).GetSelectedValues().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+						HandleSideBySide(id, text, verifySelected);
+						// verification is handled in the recursion
+					}
+					else
+					{
+						selector.SelectByValue(text);
+						if (verifySelected)
+						{
+							BrowserContext.WaitUntil(x => x.DropDownListWithId(id).GetSelectedValues().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+						}
 					}
 				}
 				catch (NoSuchElementException)
