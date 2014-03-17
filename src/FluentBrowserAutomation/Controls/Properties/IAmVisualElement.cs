@@ -54,7 +54,15 @@ namespace FluentBrowserAutomation
 
 		public static IAmVisualElement ShouldHaveFocus(this IAmVisualElement input)
 		{
-			input.BrowserContext.Browser.SwitchTo().ActiveElement().ShouldBeEqualTo(input.Element);
+			var activeElement = input.BrowserContext.Browser.SwitchTo().ActiveElement();
+			var activeElementId = activeElement.GetAttribute("id");
+			if (activeElementId != null && activeElementId.Trim() != "")
+			{
+				activeElementId.ShouldBeEqualTo(input.Element.GetAttribute("id"));
+				return input;
+			}
+			var activeElementName = activeElement.GetAttribute("name");
+			activeElementName.ShouldBeEqualTo(input.Element.GetAttribute("name"));
 			return input;
 		}
 
