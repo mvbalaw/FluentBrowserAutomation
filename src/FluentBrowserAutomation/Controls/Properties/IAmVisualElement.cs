@@ -56,13 +56,25 @@ namespace FluentBrowserAutomation
 		{
 			var activeElement = input.BrowserContext.Browser.SwitchTo().ActiveElement();
 			var activeElementId = activeElement.GetAttribute("id");
+			string expectedAttribute;
 			if (activeElementId != null && activeElementId.Trim() != "")
 			{
-				activeElementId.ShouldBeEqualTo(input.Element.GetAttribute("id"));
+				expectedAttribute = input.Element.GetAttribute("id");
+				if (expectedAttribute == null || expectedAttribute.Trim() == "")
+				{
+					throw new ArgumentException("Cursor is focussed on " + input.Element.TagName);
+				}
+				activeElementId.ShouldBeEqualTo(expectedAttribute);
+
 				return input;
 			}
 			var activeElementName = activeElement.GetAttribute("name");
-			activeElementName.ShouldBeEqualTo(input.Element.GetAttribute("name"));
+			expectedAttribute = input.Element.GetAttribute("name");
+			if (expectedAttribute == null || expectedAttribute.Trim() == "")
+			{
+				throw new ArgumentException("Cursor is focussed on " + input.Element.TagName);
+			}
+			activeElementName.ShouldBeEqualTo(expectedAttribute);
 			return input;
 		}
 
