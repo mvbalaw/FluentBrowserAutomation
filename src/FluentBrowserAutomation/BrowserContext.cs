@@ -604,6 +604,10 @@ namespace FluentBrowserAutomation
 			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
 			if (caughtException != null)
 			{
+				if (errorMessage != null)
+				{
+					throw new ArgumentException("WaitUntil '"+errorMessage+"' caught: "+caughtException.Message, caughtException);
+				}
 				throw new ArgumentException(caughtException.Message, caughtException);
 			}
 			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
