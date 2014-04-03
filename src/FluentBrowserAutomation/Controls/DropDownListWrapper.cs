@@ -22,20 +22,25 @@ namespace FluentBrowserAutomation.Controls
 		{
 		}
 
+		private IEnumerable<IWebElement> GetOptions(Func<IWebElement, bool> isMatch = null)
+		{
+			return Element.GetChildElementsByTagName("option", isMatch);
+		}
+
 		public string GetSelectedText()
 		{
-			var selectedOption = Element.FindElements(By.TagName("option")).FirstOrDefault(x => x.Selected);
+			var selectedOption = GetOptions(x => x.Selected).FirstOrDefault();
 			return selectedOption == null ? "" : selectedOption.Text;
 		}
 
 		public IEnumerable<string> GetSelectedTexts()
 		{
-			return Element.FindElements(By.TagName("option")).Where(x => x.Selected).Select(x => x.Text);
+			return GetOptions(x => x.Selected).Select(x => x.Text);
 		}
 
 		public IEnumerable<string> GetSelectedValues()
 		{
-			return Element.FindElements(By.TagName("option")).Where(x => x.Selected).Select(x => x.GetAttribute("value"));
+			return GetOptions(x => x.Selected).Select(x => x.GetAttribute("value"));
 		}
 
 		private void HandleSideBySide(string id, string text, bool verifySelected)
@@ -45,7 +50,7 @@ namespace FluentBrowserAutomation.Controls
 
 			// side by side drop down
 			var parent = sourceDdl.Element.GetParent().GetParent();
-			var paraButtons = parent.FindElements(By.TagName("p"));
+			var paraButtons = parent.GetChildElementsByTagName("p");
 			var moveToRightPseudoButton = paraButtons.First(x => x.Text.Equals("›")); // note: › not >
 			moveToRightPseudoButton.Click(); // sets focus
 			moveToRightPseudoButton.Click();
@@ -73,8 +78,7 @@ namespace FluentBrowserAutomation.Controls
 		private OptionWrapper OptionWithText([NotNull] string text, IBrowserContext browserContext)
 		{
 			const string optionWithText = "option with text '{0}'";
-			var options = Element.FindElements(By.TagName("option"));
-			var option = options.FirstOrDefault(x => x.Text == text);
+			var option = GetOptions(x => x.Text == text).FirstOrDefault();
 			return new OptionWrapper(option, String.Format(optionWithText, text), this, browserContext);
 		}
 
@@ -90,8 +94,7 @@ namespace FluentBrowserAutomation.Controls
 		private OptionWrapper OptionWithValue([NotNull] string value, IBrowserContext browserContext)
 		{
 			const string optionWithValue = "option with value '{0}'";
-			var options = Element.FindElements(By.TagName("option"));
-			var option = options.FirstOrDefault(x => x.GetAttribute("value") == value);
+			var option = GetOptions(x => x.ValueAttributeHasValue(value)).FirstOrDefault();
 			return new OptionWrapper(option, String.Format(optionWithValue, value), this, browserContext);
 		}
 
@@ -148,7 +151,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public IEnumerable<OptionWrapper> Options
 		{
-			get { return Element.FindElements(By.TagName("option")).Select(x => new OptionWrapper(x, "", this, BrowserContext)); }
+			get { return GetOptions().Select(x => new OptionWrapper(x, "", this, BrowserContext)); }
 		}
 	}
 }

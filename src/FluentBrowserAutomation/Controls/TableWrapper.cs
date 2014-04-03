@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 using FluentBrowserAutomation.Extensions;
@@ -16,39 +15,44 @@ namespace FluentBrowserAutomation.Controls
 		{
 		}
 
-		private static IEnumerable<IWebElement> GetBodyRows(ReadOnlyCollection<IWebElement> allRows)
+		private static IEnumerable<IWebElement> GetBodyRows(IEnumerable<IWebElement> allRows)
 		{
-			return allRows.Except(GetHeaderRows(allRows).Concat(GetFooterRows(allRows)));
+			return allRows.Where(x => !IsHeaderRow(x) && !IsFooterRow(x));
 		}
 
-		private static IEnumerable<IWebElement> GetFooterRows(IEnumerable<IWebElement> allRows)
+		private IEnumerable<IWebElement> GetRows()
 		{
-			var footerRows = allRows.Where(x => String.Compare(x.GetParent().TagName, "tfoot", true) == 0);
-			return footerRows;
-		}
-
-		private static IEnumerable<IWebElement> GetHeaderRows(ReadOnlyCollection<IWebElement> allRows)
-		{
-			var theadHeaderRows = allRows.Where(x => String.Compare(x.GetParent().TagName, "thead", true) == 0);
-			var inlineHeaderRows = allRows.Where(x => x.FindElements(By.TagName("th")).Any());
-			return theadHeaderRows.Union(inlineHeaderRows);
+			return Element.GetChildElementsByTagName("tr");
 		}
 
 		public IEnumerable<TableHeaderRowWrapper> Headers()
 		{
-			var allRows = Element.FindElements(By.TagName("tr"));
-			var headers = GetHeaderRows(allRows)
+			var allRows = GetRows();
+			var headers = allRows.Where(IsHeaderRow)
 				.Select((x, i) =>
-				        new TableHeaderRowWrapper(x, String.Format("{0}, header row with index {1}", HowFound, i), BrowserContext));
+					new TableHeaderRowWrapper(x, String.Format("{0}, header row with index {1}", HowFound, i), BrowserContext));
 			return headers;
+		}
+
+		private static bool IsFooterRow(IWebElement row)
+		{
+			var footer = row.GetParent().TagName.Equals("tfoot");
+			return footer;
+		}
+
+		private static bool IsHeaderRow(IWebElement row)
+		{
+			var theadOrInline = row.GetParent().TagName.Equals("thead") ||
+				row.GetChildElementsByTagName("th").Any();
+			return theadOrInline;
 		}
 
 		public IEnumerable<TableRowWrapper> Rows()
 		{
-			var allRows = Element.FindElements(By.TagName("tr"));
+			var allRows = GetRows();
 			var rows = GetBodyRows(allRows)
 				.Select((x, i) =>
-				        new TableRowWrapper(x, String.Format("{0}, row with index {1}", HowFound, i), BrowserContext));
+					new TableRowWrapper(x, String.Format("{0}, row with index {1}", HowFound, i), BrowserContext));
 
 			return rows;
 		}

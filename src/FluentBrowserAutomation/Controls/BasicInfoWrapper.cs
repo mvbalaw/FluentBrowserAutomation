@@ -44,6 +44,6 @@ namespace FluentBrowserAutomation.Controls
 			}
 		}
 
-		public string HowFound { get; private set; }
+		public string HowFound { get; internal set; }
 	}
 }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using FluentBrowserAutomation.Extensions;
+
 using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Controls
@@ -20,8 +22,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public IEnumerable<LinkWrapper> Links()
 		{
-			return Element
-				.FindElements(By.TagName("a"))
+			return Element.GetChildElementsByTagName("a")
 				.Select(x => new LinkWrapper(x, HowFound + " .links", BrowserContext));
 		}
 	}

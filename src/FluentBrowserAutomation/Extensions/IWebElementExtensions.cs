@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using OpenQA.Selenium;
 
@@ -25,35 +27,63 @@ namespace FluentBrowserAutomation.Extensions
 		public static bool IsCheckBox(this IWebElement element)
 		{
 			return element != null &&
-			       (String.Compare(element.TagName, "input", true) == 0 &&
-			        String.Compare(element.GetAttribute("type"), "checkbox", true) == 0);
+				element.TagNameHasValue("input") &&
+				element.TypeAttributeHasValue("checkbox");
 		}
 
 		public static bool IsDropDownList(this IWebElement element)
 		{
-			return element != null && String.Compare(element.TagName, "select", true) == 0;
+			return element != null &&
+				element.TagNameHasValue("select");
 		}
 
 		public static bool IsFileUpload(this IWebElement element)
 		{
 			return element != null &&
-			       (String.Compare(element.TagName, "input", true) == 0 &&
-			        String.Compare(element.GetAttribute("type"), "file", true) == 0);
+				element.TagNameHasValue("input") &&
+				element.TypeAttributeHasValue("file");
 		}
 
 		public static bool IsRadioOption(this IWebElement element)
 		{
 			return element != null &&
-			       (String.Compare(element.TagName, "input", true) == 0 &&
-			        String.Compare(element.GetAttribute("type"), "radio", true) == 0);
+				element.TagNameHasValue("input") &&
+				element.TypeAttributeHasValue("radio");
 		}
 
 		public static bool IsTextBox(this IWebElement element)
 		{
 			return element != null &&
-			       ((String.Compare(element.TagName, "input", true) == 0 &&
-			         String.Compare(element.GetAttribute("type"), "text", true) == 0) ||
-			        String.Compare(element.TagName, "textarea", true) == 0);
+				(element.TagNameHasValue("input") && element.TypeAttributeHasValue("text") ||
+					element.TagNameHasValue("textarea"));
+		}
+
+		internal static bool TagNameHasValue(this IWebElement webElement, params string[] tagNames)
+		{
+			var name = webElement.TagName;
+			return tagNames.Any(x => x.Equals(name));
+		}
+
+		internal static bool TypeAttributeHasValue(this IWebElement webElement, params string[] types)
+		{
+			var attribute = webElement.GetAttribute("type");
+			return types.Any(x => x.Equals(attribute));
+		}
+
+		internal static bool ValueAttributeHasValue(this IWebElement webElement, params string[] values)
+		{
+			var attribute = webElement.GetAttribute("value");
+			return values.Any(x => x.Equals(attribute));
+		}
+
+		internal static IEnumerable<IWebElement> GetChildElementsByTagName(this IWebElement webElement, string tagName, Func<IWebElement, bool> isMatch = null)
+		{
+			IEnumerable<IWebElement> children = webElement.FindElements(By.TagName(tagName));
+			if (isMatch != null)
+			{
+				children = children.Where(isMatch);
+			}
+			return children;
 		}
 	}
 }

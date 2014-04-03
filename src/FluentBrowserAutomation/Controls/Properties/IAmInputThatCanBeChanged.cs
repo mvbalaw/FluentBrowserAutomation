@@ -5,6 +5,7 @@ using System.Linq;
 using FluentAssert;
 
 using FluentBrowserAutomation.Controls;
+using FluentBrowserAutomation.Extensions;
 
 using OpenQA.Selenium.Interactions;
 
@@ -84,7 +85,7 @@ namespace FluentBrowserAutomation
 			{
 				input.Exists().ShouldBeTrue();
 				input.IsVisible().ShouldBeTrue();
-				return checkBox.Element.GetAttribute("value").Equals(expected);
+				return checkBox.Element.ValueAttributeHasValue(expected);
 			}
 
 			throw new AssertionException("Cannot get a text value from " + input.HowFound);

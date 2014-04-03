@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentBrowserAutomation.Accessors;
+using FluentBrowserAutomation.Extensions;
+
 using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Controls
@@ -15,7 +17,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public IEnumerable<ListItemWrapper> Rows()
 		{
-			var items = Element.FindElements(By.TagName("li"))
+			var items = Element.GetChildElementsByTagName("li")
 				.Select((x, i) =>
 				        new ListItemWrapper(x, String.Format("{0}, item with index {1}", HowFound, i), BrowserContext));
 

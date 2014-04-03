@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+
+using FluentBrowserAutomation.Extensions;
 
 using OpenQA.Selenium;
 
@@ -14,7 +17,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public string[] CellValues()
 		{
-			var elements = Element.FindElements(By.TagName("td"));
+			var elements = GetCells();
 			return elements.Select((cell, index) => new TableCellWrapper(cell, String.Format("{0}, table cell with index {1}", HowFound, index), BrowserContext))
 				.Select(x => (string)x.Text())
 				.ToArray();
@@ -22,11 +25,21 @@ namespace FluentBrowserAutomation.Controls
 
 		public TableCellWrapper CellWithIndex(int zeroBasedIndex)
 		{
-			var elements = Element.FindElements(By.TagName("td"));
-			var cell = elements.Count > zeroBasedIndex ? elements[zeroBasedIndex] : null;
-			var tableCellWrapper = new TableCellWrapper(cell, String.Format("{0}, table cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
+			var cell = GetCells()
+				.Select((x, i) => new
+				                  {
+					                  Element = x,
+					                  Index = i
+				                  })
+				.FirstOrDefault(x => x.Index == zeroBasedIndex);
+			var tableCellWrapper = new TableCellWrapper(cell == null ? null : cell.Element, String.Format("{0}, table cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
 			tableCellWrapper.Exists().ShouldBeTrue();
 			return tableCellWrapper;
+		}
+
+		private IEnumerable<IWebElement> GetCells()
+		{
+			return Element.GetChildElementsByTagName("td");
 		}
 	}
 
@@ -39,7 +52,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public string[] CellValues()
 		{
-			var elements = Element.FindElements(By.TagName("th"));
+			var elements = GetCells();
 			return elements.Select((cell, index) => new TableHeaderCellWrapper(cell, String.Format("{0}, table header cell with index {1}", HowFound, index), BrowserContext))
 				.Select(x => (string)x.Text())
 				.ToArray();
@@ -47,9 +60,19 @@ namespace FluentBrowserAutomation.Controls
 
 		public TableHeaderCellWrapper CellWithIndex(int zeroBasedIndex)
 		{
-			var elements = Element.FindElements(By.TagName("th"));
-			var cell = elements.Count > zeroBasedIndex ? elements[zeroBasedIndex] : null;
-			return new TableHeaderCellWrapper(cell, String.Format("{0}, table header cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
+			var cell = GetCells()
+				.Select((x, i) => new
+				                  {
+					                  Element = x,
+					                  Index = i
+				                  })
+				.FirstOrDefault(x => x.Index == zeroBasedIndex);
+			return new TableHeaderCellWrapper(cell == null ? null : cell.Element, String.Format("{0}, table header cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
+		}
+
+		private IEnumerable<IWebElement> GetCells()
+		{
+			return Element.GetChildElementsByTagName("th");
 		}
 	}
 }
