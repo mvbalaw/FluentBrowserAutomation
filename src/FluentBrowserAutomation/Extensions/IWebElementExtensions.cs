@@ -2,12 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using FluentBrowserAutomation.Controls;
+
 using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Extensions
 {
 	public static class IWebElementExtensions
 	{
+		internal static IEnumerable<IWebElement> GetChildElementsByTagName(this IWebElement webElement, string tagName, Func<IWebElement, bool> isMatch = null)
+		{
+			IEnumerable<IWebElement> children = webElement.FindElements(By.TagName(tagName));
+			if (isMatch != null)
+			{
+				children = children.Where(isMatch);
+			}
+			return children;
+		}
+
 		public static IWebElement GetParent(this IWebElement e)
 		{
 			// http://watirmelon.com/2012/07/25/getting-an-elements-parent-in-webdriver-in-c/
@@ -22,6 +34,12 @@ namespace FluentBrowserAutomation.Extensions
 			}
 
 			return parent;
+		}
+
+		internal static bool IsButton(this IWebElement webElement)
+		{
+			return webElement.TypeAttributeHasValue("submit", "button") ||
+				webElement.TagNameHasValue("button");
 		}
 
 		public static bool IsCheckBox(this IWebElement element)
@@ -74,16 +92,6 @@ namespace FluentBrowserAutomation.Extensions
 		{
 			var attribute = webElement.GetAttribute("value");
 			return values.Any(x => x.Equals(attribute));
-		}
-
-		internal static IEnumerable<IWebElement> GetChildElementsByTagName(this IWebElement webElement, string tagName, Func<IWebElement, bool> isMatch = null)
-		{
-			IEnumerable<IWebElement> children = webElement.FindElements(By.TagName(tagName));
-			if (isMatch != null)
-			{
-				children = children.Where(isMatch);
-			}
-			return children;
 		}
 	}
 }

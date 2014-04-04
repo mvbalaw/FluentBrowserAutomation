@@ -27,6 +27,18 @@ namespace FluentBrowserAutomation.Controls
 			return Element.GetChildElementsByTagName("option", isMatch);
 		}
 
+		private IEnumerable<IWebElement> GetOptionsWithText(string text)
+		{
+			var children = Element.FindElements(By.XPath("//option[normalize-space(text())='" + text.Replace("'", "&apos;") + "']"));
+			return children;
+		}
+
+		private IEnumerable<IWebElement> GetOptionsWithValue(string value)
+		{
+			var children = Element.FindElements(By.XPath("//option[@value='" + value.Replace("'", "&apos;") + "']"));
+			return children;
+		}
+
 		public string GetSelectedText()
 		{
 			var selectedOption = GetOptions(x => x.Selected).FirstOrDefault();
@@ -71,15 +83,9 @@ namespace FluentBrowserAutomation.Controls
 			this.Exists().ShouldBeTrue();
 			this.IsEnabled().ShouldBeTrue();
 			this.IsVisible().ShouldBeTrue();
-			var option = OptionWithText(text, BrowserContext);
-			return option;
-		}
-
-		private OptionWrapper OptionWithText([NotNull] string text, IBrowserContext browserContext)
-		{
-			const string optionWithText = "option with text '{0}'";
-			var option = GetOptions(x => x.Text == text).FirstOrDefault();
-			return new OptionWrapper(option, String.Format(optionWithText, text), this, browserContext);
+			var howFound = String.Format("option with text '{0}'", text);
+			var option = GetOptionsWithText(text).FirstOrDefault();
+			return new OptionWrapper(option, howFound, this, BrowserContext);
 		}
 
 		public OptionWrapper OptionWithValue([NotNull] string text)
@@ -87,15 +93,9 @@ namespace FluentBrowserAutomation.Controls
 			this.Exists().ShouldBeTrue();
 			this.IsEnabled().ShouldBeTrue();
 			this.IsVisible().ShouldBeTrue();
-			var option = OptionWithValue(text, BrowserContext);
-			return option;
-		}
-
-		private OptionWrapper OptionWithValue([NotNull] string value, IBrowserContext browserContext)
-		{
-			const string optionWithValue = "option with value '{0}'";
-			var option = GetOptions(x => x.ValueAttributeHasValue(value)).FirstOrDefault();
-			return new OptionWrapper(option, String.Format(optionWithValue, value), this, browserContext);
+			var howFound = String.Format("option with value '{0}'", text);
+			var option = GetOptionsWithValue(text).FirstOrDefault();
+			return new OptionWrapper(option, howFound, this, BrowserContext);
 		}
 
 		public void Select(string text)
@@ -120,7 +120,7 @@ namespace FluentBrowserAutomation.Controls
 					selector.SelectByText(text);
 					if (verifySelected)
 					{
-						BrowserContext.WaitUntil(x => x.DropDownListWithId(id).GetSelectedTexts().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+						BrowserContext.WaitUntil(x => x.DropDownListWithId(id).GetOptionsWithText(text).Any(y => y.Selected), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
 					}
 				}
 			}
@@ -138,7 +138,7 @@ namespace FluentBrowserAutomation.Controls
 						selector.SelectByValue(text);
 						if (verifySelected)
 						{
-							BrowserContext.WaitUntil(x => x.DropDownListWithId(id).GetSelectedValues().Any(y => y.Equals(text)), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+							BrowserContext.WaitUntil(x => x.DropDownListWithId(id).GetOptionsWithValue(text).Any(y => y.Selected), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
 						}
 					}
 				}

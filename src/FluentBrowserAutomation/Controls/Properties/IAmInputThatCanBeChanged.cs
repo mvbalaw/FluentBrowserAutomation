@@ -93,21 +93,13 @@ namespace FluentBrowserAutomation
 
 		public static IAmInputThatCanBeChanged SelectAnyOptionExcept(this IAmInputThatCanBeChanged input, params string[] unwantedValues)
 		{
-			var dropDown = input as DropDownListWrapper;
-			if (dropDown == null)
+			var dropDownListWrapper = input as DropDownListWrapper;
+			if (dropDownListWrapper == null)
 			{
 				throw new AssertionException(input.HowFound + " is not a drop down list.");
 			}
-			var id = dropDown.Id;
 			input.WaitUntil(x => x.Exists().IsTrue);
 			input.IsVisible().ShouldBeTrue();
-
-			var dropDownListWrapper = input.BrowserContext.DropDownListWithId(id);
-			var isDropDownList = dropDownListWrapper != null;
-			if (!isDropDownList)
-			{
-				throw new AssertionException("Can only call SelectAnyOptionExcept() on drop down lists.");
-			}
 
 			var option = dropDownListWrapper.Options.First(x => !unwantedValues.Contains(x.Text));
 			dropDownListWrapper.Select(option.Text);
