@@ -1,8 +1,8 @@
 selenium: 
 
-http://docs.seleniumhq.org/download/
+http://selenium-release.storage.googleapis.com/index.html
 
 chromedriver:
 
-https://code.google.com/p/chromedriver/downloads/list
+http://chromedriver.storage.googleapis.com/index.html
 
