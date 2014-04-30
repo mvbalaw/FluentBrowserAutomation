@@ -82,6 +82,9 @@ namespace FluentBrowserAutomation
 		TextBoxWrapper TextBoxWithLabel([NotNull] string label);
 		IEnumerable<TextBoxWrapper> TextBoxes();
 		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, int secondsToWait = 10, string errorMessage = null);
+	    IBrowserContext TryAndWaitUntil([NotNull] Func<IBrowserContext, bool> func,
+	        [NotNull] Func<IBrowserContext, bool> waitOn, int secondsToWait = 5, int totalNumberOfRetries = 1,
+	        string errorMessage = null);
 	}
 
 	public class BrowserContext : IBrowserContext
@@ -575,6 +578,49 @@ namespace FluentBrowserAutomation
 				throw new ArgumentException(caughtException.Message, caughtException);
 			}
 			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
+		}
+
+        public IBrowserContext TryAndWaitUntil(Func<IBrowserContext, bool> func, Func<IBrowserContext, bool> waitOn, int secondsToWait = 5, int totalNumberOfRetries = 1, string errorMessage = null)
+		{
+		    int numberOfTries = 0;
+            Exception caughtException = null;
+
+            while (numberOfTries < totalNumberOfRetries)
+            {
+                func(this);
+
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                do
+                {
+                    try
+                    {
+                        if (waitOn(this))
+                        {
+                            return this;
+                        }
+                    }
+                        // ReSharper disable once EmptyGeneralCatchClause
+                    catch (Exception exception)
+                    {
+                        caughtException = exception;
+                    }
+                    Thread.Sleep(TimeSpan.FromSeconds(.25));
+                } while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
+                
+                numberOfTries++;
+            }
+
+            if (caughtException != null)
+            {
+                if (errorMessage != null)
+                {
+                    throw new ArgumentException(
+                        "WaitUntil '" + errorMessage + "' caught: " + caughtException.Message, caughtException);
+                }
+                throw new ArgumentException(caughtException.Message, caughtException);
+            }
+            throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
 		}
 
 		public string BaseUrl
