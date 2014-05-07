@@ -41,6 +41,11 @@ namespace FluentBrowserAutomation.Controls
 		{
 			return Element.GetChildElementsByTagName("td");
 		}
+        
+        public void Click()
+		{
+			Element.Click();
+		}
 	}
 
 	public class TableHeaderRowWrapper : BasicInfoWrapper
@@ -74,5 +79,10 @@ namespace FluentBrowserAutomation.Controls
 		{
 			return Element.GetChildElementsByTagName("th");
 		}
+
+        public void Click()
+        {
+            Element.Click();
+        }
 	}
 }
