@@ -185,6 +185,7 @@ namespace FluentBrowserAutomation
 		public void CloseBrowser()
 		{
 			_browserManager.Close();
+			_browser = null;
 		}
 
 		public ContainerWrapper ContainerWithId(string id)
