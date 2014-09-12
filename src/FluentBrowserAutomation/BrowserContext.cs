@@ -30,6 +30,7 @@ namespace FluentBrowserAutomation
 		CheckBoxWrapper CheckBoxWithIdAndValue([NotNull] string id, [NotNull] string value);
 		CheckBoxWrapper CheckBoxWithLabel([NotNull] string id);
 		CheckBoxWrapper CheckBoxWithNameAndValue([NotNull] string name, [NotNull] string value);
+	    CheckBoxWrapper CheckBoxWithNameAndDataAttribute([NotNull] string name, [NotNull] string dataId, [NotNull] string dataValue);
 		IEnumerable<CheckBoxWrapper> CheckBoxes();
 		IEnumerable<CheckBoxWrapper> CheckBoxesWithName([NotNull] string name);
 		void CloseBrowser();
@@ -42,6 +43,7 @@ namespace FluentBrowserAutomation
 		DropDownListWrapper DropDownListWithLabel([NotNull] string label);
 		IEnumerable<DropDownListWrapper> DropDownLists();
 		string GetHiddenValueWithId([NotNull] string id);
+        string GetHiddenDataValueWithId([NotNull] string id);
 		IEnumerable<IWebElement> GetWebElementsWithClassName([NotNull] string className);
 		void GoToUrl([NotNull] string url);
 		TextBoxWrapper HiddenWithId([NotNull] string id);
@@ -123,8 +125,10 @@ namespace FluentBrowserAutomation
 		{
 			const string howFound = "type 'button'";
 			var inputWrappers = this.GetElements(By.XPath("//input[@type='submit' or @type='button']|//button"))
-				.Select(input => new ButtonWrapper(input, howFound, this));
-			return inputWrappers;
+				.Select(input => new ButtonWrapper(input, howFound, this)).ToList();
+		    var buttonWrappers = this.GetElements(By.TagName("button")).Select(input => new ButtonWrapper(input, howFound, this));
+		    var listWrappers = inputWrappers.Concat(buttonWrappers);
+		    return listWrappers;
 		}
 
 		public IEnumerable<ButtonWrapper> ButtonsWithClassName(string className)
@@ -165,6 +169,13 @@ namespace FluentBrowserAutomation
 		{
 			var howFound = String.Format("checkbox with name '{0}'", name);
 			var checkBox = this.TryGetElementByNameAndTypeAndValue(name, "checkbox", value);
+			return new CheckBoxWrapper(checkBox, howFound, this);
+		}
+
+        public CheckBoxWrapper CheckBoxWithNameAndDataAttribute(string name, string dataId, string dataValue)
+		{
+			var howFound = String.Format("checkbox with name '{0}'", name);
+            var checkBox = this.TryGetElementByNameAndData(name, dataId, dataValue);
 			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
 
@@ -251,6 +262,12 @@ namespace FluentBrowserAutomation
 		{
 			var hidden = this.TryGetElementByIdAndType(id, "hidden");
 			return hidden.GetAttribute("value");
+		}
+
+        public string GetHiddenDataValueWithId(string id)
+		{
+			var hidden = this.TryGetElementByIdAndType(id, "hidden");
+			return hidden.GetAttribute("data-value");
 		}
 
 		public IEnumerable<IWebElement> GetWebElementsWithClassName(string className)
@@ -708,6 +725,11 @@ namespace FluentBrowserAutomation
 		internal static IWebElement TryGetElementByNameAndTypeAndValue(this IBrowserContext browserContext, string name, string type, string value)
 		{
 			return browserContext.TryGetElement(By.XPath("//*[@name='" + name + "' and @type='" + type + "' and @value='" + value.Replace("'", "&apos;") + "']"));
+		}
+
+        internal static IWebElement TryGetElementByNameAndData(this IBrowserContext browserContext, string name, string dataId, string dataValue)
+		{
+			return browserContext.TryGetElement(By.XPath("//*[@name='" + name + "' and @data-"+ dataId +"='" + dataValue.Replace("'", "&apos;") + "']"));
 		}
 
 		internal static IWebElement TryGetElementByName(this IBrowserContext browserContext, string name, Func<IWebElement, bool> isMatch = null)
