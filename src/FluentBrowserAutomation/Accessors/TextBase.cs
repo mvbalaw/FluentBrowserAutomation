@@ -55,6 +55,13 @@ namespace FluentBrowserAutomation.Accessors
 			actual.ShouldBeEqualTo(expected, errorMessage);
 		}
 
+		private void ShouldBeEqualTo([NotNull] string text, Func<string> errorMessage)
+		{
+			var expected = text;
+			var actual = Text ?? "";
+			actual.ShouldBeEqualTo(expected, errorMessage);
+		}
+
 		public void ShouldNotBeEmpty()
 		{
 			var actual = Text ?? "";

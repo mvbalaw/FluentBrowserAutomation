@@ -1,13 +1,12 @@
 using FluentBrowserAutomation.Accessors;
 
-using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
 namespace FluentBrowserAutomation.Controls
 {
 	public class OptionWrapper : BasicInfoWrapper
 	{
-		public OptionWrapper(IWebElement option, string howFound, DropDownListWrapper parentDropDown, IBrowserContext browserContext)
+		public OptionWrapper(RemoteWebElementWrapper option, string howFound, DropDownListWrapper parentDropDown, IBrowserContext browserContext)
 			: base(option, howFound, browserContext)
 		{
 			_parentDropDown = parentDropDown;
@@ -17,9 +16,9 @@ namespace FluentBrowserAutomation.Controls
 
 		public void Select()
 		{
-			this.Exists().ShouldBeTrue();
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
 			_parentDropDown.ScrollToIt();
-			var select = new SelectElement(_parentDropDown.Element);
+			var select = new SelectElement(_parentDropDown.Element.RemoteWebElement);
 			select.SelectByText(Text);
 		}
 

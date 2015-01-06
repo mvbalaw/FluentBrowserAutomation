@@ -2,25 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentBrowserAutomation.Extensions;
-using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Controls
 {
     public class TableWrapper : BasicInfoWrapper
     {
-        public TableWrapper(IWebElement table, string howFound, IBrowserContext browserContext)
+		public TableWrapper(RemoteWebElementWrapper table, string howFound, IBrowserContext browserContext)
             : base(table, howFound, browserContext)
         {
         }
 
-        private static IEnumerable<IWebElement> GetBodyRows(IEnumerable<IWebElement> allRows)
+		private static IEnumerable<RemoteWebElementWrapper> GetBodyRows(IEnumerable<RemoteWebElementWrapper> allRows)
         {
             return allRows.Where(x => !IsHeaderRow(x) && !IsFooterRow(x));
         }
 
-        private IEnumerable<IWebElement> GetRows()
+        private IEnumerable<RemoteWebElementWrapper> GetRows()
         {
-            return Element.GetChildElementsByTagName("tr");
+            return Element.GetChildElementsByTagName("tr").Select(x=>new RemoteWebElementWrapper(null,x));
         }
 
         public IEnumerable<TableHeaderRowWrapper> Headers()
@@ -33,15 +32,15 @@ namespace FluentBrowserAutomation.Controls
             return headers;
         }
 
-        private static bool IsFooterRow(IWebElement row)
+        private static bool IsFooterRow(RemoteWebElementWrapper row)
         {
-            bool footer = row.GetParent().TagName.Equals("tfoot");
+            var footer = row.GetParent().TagName.Equals("tfoot");
             return footer;
         }
 
-        private static bool IsHeaderRow(IWebElement row)
+        private static bool IsHeaderRow(RemoteWebElementWrapper row)
         {
-            bool theadOrInline = row.GetParent().TagName.Equals("thead") ||
+            var theadOrInline = row.GetParent().TagName.Equals("thead") ||
                                  row.GetChildElementsByTagName("th").Any();
             return theadOrInline;
         }
@@ -59,7 +58,7 @@ namespace FluentBrowserAutomation.Controls
         public TableRowWrapper RowWithId(string tableRowId)
         {
             var row = GetRows().FirstOrDefault(x => x.GetAttribute("id") == tableRowId);
-            return new TableRowWrapper(row, String.Format("{0}, row with id {1}", HowFound, tableRowId), BrowserContext);
+			return new TableRowWrapper(row, String.Format("{0}, row with id {1}", HowFound, tableRowId), BrowserContext);
         }
     }
 }

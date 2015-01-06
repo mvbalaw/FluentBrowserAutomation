@@ -15,6 +15,7 @@ using FluentBrowserAutomation.Framework;
 using JetBrains.Annotations;
 
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace FluentBrowserAutomation
 {
@@ -29,8 +30,8 @@ namespace FluentBrowserAutomation
 		CheckBoxWrapper CheckBoxWithId([NotNull] string id);
 		CheckBoxWrapper CheckBoxWithIdAndValue([NotNull] string id, [NotNull] string value);
 		CheckBoxWrapper CheckBoxWithLabel([NotNull] string id);
+		CheckBoxWrapper CheckBoxWithNameAndDataAttribute([NotNull] string name, [NotNull] string dataId, [NotNull] string dataValue);
 		CheckBoxWrapper CheckBoxWithNameAndValue([NotNull] string name, [NotNull] string value);
-	    CheckBoxWrapper CheckBoxWithNameAndDataAttribute([NotNull] string name, [NotNull] string dataId, [NotNull] string dataValue);
 		IEnumerable<CheckBoxWrapper> CheckBoxes();
 		IEnumerable<CheckBoxWrapper> CheckBoxesWithName([NotNull] string name);
 		void CloseBrowser();
@@ -42,19 +43,19 @@ namespace FluentBrowserAutomation
 		DropDownListWrapper DropDownListWithId([NotNull] string idOfList);
 		DropDownListWrapper DropDownListWithLabel([NotNull] string label);
 		IEnumerable<DropDownListWrapper> DropDownLists();
+		string GetHiddenDataValueWithId([NotNull] string id);
 		string GetHiddenValueWithId([NotNull] string id);
-        string GetHiddenDataValueWithId([NotNull] string id);
-		IEnumerable<IWebElement> GetWebElementsWithClassName([NotNull] string className);
+		IEnumerable<RemoteWebElementWrapper> GetWebElementsWithClassName([NotNull] string className);
 		void GoToUrl([NotNull] string url);
 		TextBoxWrapper HiddenWithId([NotNull] string id);
 		IEnumerable<TextBoxWrapper> Hiddens();
 		BrowserContext IdOfFieldWithFocusShouldBe([NotNull] string expectedId);
 		IEnumerable<ButtonWrapper> ImageButtons();
 		ImageWrapper ImageWithId([NotNull] string id);
-		IAmInputThatCanBeChanged InputWithClassName([NotNull] string className);
-		IAmInputThatCanBeChanged InputWithId([NotNull] string id);
-		IAmInputThatCanBeChanged InputWithLabel([NotNull] string label);
-		IAmInputThatCanBeChanged InputWithValue([NotNull] string value);
+		IAmGenericInputThatCanBeChanged InputWithClassName([NotNull] string className);
+		IAmGenericInputThatCanBeChanged InputWithId([NotNull] string id);
+		IAmGenericInputThatCanBeChanged InputWithLabel([NotNull] string label);
+		dynamic InputWithValue([NotNull] string value);
 		LabelWrapper LabelWithId([NotNull] string id);
 		IEnumerable<LabelWrapper> Labels();
 		LinkWrapper LinkWithId([NotNull] string id);
@@ -72,7 +73,7 @@ namespace FluentBrowserAutomation
 		RadioOptionWrapper RadioOptionWithNameAndValue([NotNull] string name, [NotNull] string value);
 		IEnumerable<RadioOptionWrapper> RadioOptions();
 		IEnumerable<RadioOptionWrapper> RadioOptionsWithName([NotNull] string name);
-		IAmInputThatCanBeChanged Set([NotNull] string labelText);
+		IAmGenericInputThatCanBeChanged Set([NotNull] string labelText);
 		SpanWrapper SpanWithId([NotNull] string id);
 		SpanWrapper SpanWithText([NotNull] string spanText);
 		IEnumerable<SpanWrapper> Spans();
@@ -83,10 +84,13 @@ namespace FluentBrowserAutomation
 		TextBoxWrapper TextBoxWithId([NotNull] string id);
 		TextBoxWrapper TextBoxWithLabel([NotNull] string label);
 		IEnumerable<TextBoxWrapper> TextBoxes();
+
+		IBrowserContext TryAndWaitUntil([NotNull] Func<IBrowserContext, bool> func,
+			[NotNull] Func<IBrowserContext, bool> waitOn, int secondsToWait = 5, int totalNumberOfRetries = 1,
+			string errorMessage = null);
+
 		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, int secondsToWait = 10, string errorMessage = null);
-	    IBrowserContext TryAndWaitUntil([NotNull] Func<IBrowserContext, bool> func,
-	        [NotNull] Func<IBrowserContext, bool> waitOn, int secondsToWait = 5, int totalNumberOfRetries = 1,
-	        string errorMessage = null);
+		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, Func<string> buildActivityDescriptionMessage, int secondsToWait = 10);
 	}
 
 	public class BrowserContext : IBrowserContext
@@ -94,30 +98,28 @@ namespace FluentBrowserAutomation
 		public BrowserContext(IBrowserManager browserManager)
 		{
 			_browserManager = browserManager;
+			_timeToWait = TimeSpan.FromSeconds(.25);
 		}
 
 		private IWebDriver _browser;
 		private readonly IBrowserManager _browserManager;
+		private readonly TimeSpan _timeToWait;
 
 		public ButtonWrapper ButtonWithId(string id)
 		{
 			var howFound = String.Format("button with id '{0}'", id);
-			var button = this.TryGetElementById(id, IWebElementExtensions.IsButton);
+			var button = this.TryGetElementById(id, RemoteWebElementWrapperExtensions.IsButton);
 			return new ButtonWrapper(button, howFound, this);
 		}
 
 		public ButtonWrapper ButtonWithText(string text)
 		{
 			var howFound = String.Format("button with visible text '{0}'", text);
-			var button = Buttons().FirstOrDefault(x => x.Text == text);
-			if (button != null)
+			var button = new ButtonWrapper(new RemoteWebElementWrapper(() =>
 			{
-				button.HowFound = howFound;
-			}
-			else
-			{
-				button = new ButtonWrapper(null, howFound, this);
-			}
+				var firstOrDefault = Buttons().FirstOrDefault(x => x.Text == text);
+				return firstOrDefault == null ? null : firstOrDefault.Element.RemoteWebElement;
+			}), howFound, this);
 			return button;
 		}
 
@@ -126,15 +128,15 @@ namespace FluentBrowserAutomation
 			const string howFound = "type 'button'";
 			var inputWrappers = this.GetElements(By.XPath("//input[@type='submit' or @type='button']|//button"))
 				.Select(input => new ButtonWrapper(input, howFound, this)).ToList();
-		    var buttonWrappers = this.GetElements(By.TagName("button")).Select(input => new ButtonWrapper(input, howFound, this));
-		    var listWrappers = inputWrappers.Concat(buttonWrappers);
-		    return listWrappers;
+			var buttonWrappers = this.GetElements(By.TagName("button")).Select(input => new ButtonWrapper(input, howFound, this));
+			var listWrappers = inputWrappers.Concat(buttonWrappers);
+			return listWrappers;
 		}
 
 		public IEnumerable<ButtonWrapper> ButtonsWithClassName(string className)
 		{
 			var howFound = String.Format("button with class '{0}'", className);
-			return this.GetElementsByClassName(className, IWebElementExtensions.IsButton)
+			return this.GetElementsByClassName(className, RemoteWebElementWrapperExtensions.IsButton)
 				.Select(x => new ButtonWrapper(x, howFound, this));
 		}
 
@@ -154,28 +156,20 @@ namespace FluentBrowserAutomation
 
 		public CheckBoxWrapper CheckBoxWithLabel(string label)
 		{
-			var input = InputWithLabel(label);
-			var checkBoxWrapper = input as CheckBoxWrapper;
-			var howFound = String.Format("checkbox with label '{0}'", label);
-			if (checkBoxWrapper != null)
-			{
-				checkBoxWrapper.HowFound = howFound;
-				return checkBoxWrapper;
-			}
-			return new CheckBoxWrapper(null, howFound, input.BrowserContext);
+			return InputWithLabel(label).AsCheckBox(String.Format("checkbox with label '{0}'", label));
+		}
+
+		public CheckBoxWrapper CheckBoxWithNameAndDataAttribute(string name, string dataId, string dataValue)
+		{
+			var howFound = String.Format("checkbox with name '{0}'", name);
+			var checkBox = this.TryGetElementByNameAndData(name, dataId, dataValue);
+			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
 
 		public CheckBoxWrapper CheckBoxWithNameAndValue(string name, string value)
 		{
 			var howFound = String.Format("checkbox with name '{0}'", name);
 			var checkBox = this.TryGetElementByNameAndTypeAndValue(name, "checkbox", value);
-			return new CheckBoxWrapper(checkBox, howFound, this);
-		}
-
-        public CheckBoxWrapper CheckBoxWithNameAndDataAttribute(string name, string dataId, string dataValue)
-		{
-			var howFound = String.Format("checkbox with name '{0}'", name);
-            var checkBox = this.TryGetElementByNameAndData(name, dataId, dataValue);
 			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
 
@@ -241,14 +235,7 @@ namespace FluentBrowserAutomation
 
 		public DropDownListWrapper DropDownListWithLabel(string label)
 		{
-			var input = InputWithLabel(label);
-			var downListWithLabel = input as DropDownListWrapper;
-			if (downListWithLabel != null)
-			{
-				return downListWithLabel;
-			}
-			var howFound = String.Format("drop down list with label '{0}'", label);
-			return new DropDownListWrapper(null, howFound, input.BrowserContext);
+			return InputWithLabel(label).AsDropDownList(String.Format("drop down list with label '{0}'", label));
 		}
 
 		public IEnumerable<DropDownListWrapper> DropDownLists()
@@ -258,19 +245,19 @@ namespace FluentBrowserAutomation
 			return dropDowns.Select(x => new DropDownListWrapper(x, howFound, this));
 		}
 
+		public string GetHiddenDataValueWithId(string id)
+		{
+			var hidden = this.TryGetElementByIdAndType(id, "hidden");
+			return hidden.GetAttribute("data-value");
+		}
+
 		public string GetHiddenValueWithId(string id)
 		{
 			var hidden = this.TryGetElementByIdAndType(id, "hidden");
 			return hidden.GetAttribute("value");
 		}
 
-        public string GetHiddenDataValueWithId(string id)
-		{
-			var hidden = this.TryGetElementByIdAndType(id, "hidden");
-			return hidden.GetAttribute("data-value");
-		}
-
-		public IEnumerable<IWebElement> GetWebElementsWithClassName(string className)
+		public IEnumerable<RemoteWebElementWrapper> GetWebElementsWithClassName(string className)
 		{
 			return this.GetElementsByClassName(className);
 		}
@@ -315,25 +302,25 @@ namespace FluentBrowserAutomation
 			return new ImageWrapper(button, howFound, this);
 		}
 
-		public IAmInputThatCanBeChanged InputWithClassName(string className)
+		public IAmGenericInputThatCanBeChanged InputWithClassName(string className)
 		{
 			_browserManager.Trace("Getting input with class name '" + className + "'");
 			return SetterFor.InputWithClassName(this, className);
 		}
 
-		public IAmInputThatCanBeChanged InputWithId(string id)
+		public IAmGenericInputThatCanBeChanged InputWithId(string id)
 		{
 			_browserManager.Trace("Getting input with id '" + id + "'");
 			return SetterFor.InputWithId(this, id);
 		}
 
-		public IAmInputThatCanBeChanged InputWithLabel(string label)
+		public IAmGenericInputThatCanBeChanged InputWithLabel(string label)
 		{
 			_browserManager.Trace("Getting input with label '" + label + "'");
 			return SetterFor.InputWithLabel(this, label);
 		}
 
-		public IAmInputThatCanBeChanged InputWithValue(string value)
+		public dynamic InputWithValue(string value)
 		{
 			_browserManager.Trace("Getting input with value '" + value + "'");
 			return SetterFor.InputWithValue(this, value);
@@ -363,8 +350,11 @@ namespace FluentBrowserAutomation
 		public LinkWrapper LinkWithText(string text)
 		{
 			var howFound = String.Format("link with visible text '{0}'", text);
-			var link = LinksWithText(text).FirstOrDefault() ??
-				new LinkWrapper(null, howFound, this);
+			var link = new LinkWrapper(new RemoteWebElementWrapper(() =>
+			{
+				var firstOrDefault = LinksWithText(text).FirstOrDefault();
+				return firstOrDefault == null ? null : firstOrDefault.Element.RemoteWebElement;
+			}), howFound, this);
 			return link;
 		}
 
@@ -393,8 +383,7 @@ namespace FluentBrowserAutomation
 					return attribute == htmlEscapedText ||
 						attribute == text ||
 						attribute.Trim() == text;
-				}))
-				.Select(link => new LinkWrapper(link, howFound, this));
+				})).Select(link => new LinkWrapper(link, howFound, this));
 			return items;
 		}
 
@@ -407,41 +396,37 @@ namespace FluentBrowserAutomation
 
 		public INavigationControl NavigationControlWithId(string id)
 		{
-			var elementWithId = this.TryGetElementById(id);
-			if (elementWithId != null)
+			return new GenericNavigationControl(new RemoteWebElementWrapper(() =>
 			{
-				if (elementWithId.TagNameHasValue("a"))
-				{
-					return new LinkWrapper(elementWithId, "link with id '" + id + "'", this);
-				}
-				if (elementWithId.IsButton())
-				{
-					return new ButtonWrapper(elementWithId, "button with id '" + id + "'", this);
-				}
-			}
-			return new ButtonWrapper(null, "navigation control with id '" + id + "'", this);
+				var elementById = this.TryGetElementById(id);
+				return elementById == null ? null : elementById.RemoteWebElement;
+			}), "navigation control with id '" + id + "'", this);
 		}
 
 		public INavigationControl NavigationControlWithText(string text)
 		{
-			var button = ButtonWithText(text);
-			if (button.Exists().IsTrue)
+			return new GenericNavigationControl(new RemoteWebElementWrapper(() =>
 			{
-				return button;
-			}
-			return LinkWithText(text);
+				var button = ButtonWithText(text);
+				if (button.Exists().IsTrue)
+				{
+					return button.Element.RemoteWebElement;
+				}
+				var link = LinkWithText(text);
+				if (link.Exists().IsTrue)
+				{
+					return link.Element.RemoteWebElement;
+				}
+				return null;
+			}), "navigation control with text '" + text + "'", this);
 		}
 
 		public IEnumerable<INavigationControl> NavigationControlsWithClassName(string className)
 		{
-			var howFound = String.Format("link with class '{0}'", className);
+			var howFound = String.Format("navigation control with class '{0}'", className);
 			var buttonsAndLinks = this.GetElementsByClassName(className)
-				.Select(x => x.TagNameHasValue("a")
-					? new LinkWrapper(x, howFound, this)
-					: x.IsButton()
-						? (INavigationControl)new ButtonWrapper(x, howFound, this)
-						: null)
-				.Where(x => x != null)
+				.Where(x => x.IsButton() || x.IsLink())
+				.Select(x => new GenericNavigationControl(x, howFound, this))
 				.ToArray();
 			return buttonsAndLinks;
 		}
@@ -460,13 +445,7 @@ namespace FluentBrowserAutomation
 
 		public RadioOptionWrapper RadioOptionWithLabel(string label)
 		{
-			var input = InputWithLabel(label);
-			var radioOptionWrapper = input as RadioOptionWrapper;
-			if (radioOptionWrapper != null)
-			{
-				return radioOptionWrapper;
-			}
-			return new RadioOptionWrapper(null, "radio option with label '" + label + "'", input.BrowserContext);
+			return InputWithLabel(label).AsRadioOption("radio option with label '" + label + "'");
 		}
 
 		public RadioOptionWrapper RadioOptionWithNameAndValue(string name, string value)
@@ -490,7 +469,7 @@ namespace FluentBrowserAutomation
 			return checkBoxes.Select(x => new RadioOptionWrapper(x, howFound, this));
 		}
 
-		public IAmInputThatCanBeChanged Set(string labelText)
+		public IAmGenericInputThatCanBeChanged Set(string labelText)
 		{
 			return InputWithLabel(labelText);
 		}
@@ -532,13 +511,13 @@ namespace FluentBrowserAutomation
 		{
 			const string howFound = "type 'table'";
 			var tables = this.GetElementsByTagName("table");
-			return tables.Select(x => new TableWrapper(x, howFound, this));
+			return tables.Select((x, index) => new TableWrapper(x, howFound, this));
 		}
 
 		public TextBoxWrapper TextBoxWithFocus()
 		{
 			var active = Browser.SwitchTo().ActiveElement();
-			return new TextBoxWrapper(active, "textbox with focus", this);
+			return new TextBoxWrapper(new RemoteWebElementWrapper(() => null, active), "textbox with focus", this);
 		}
 
 		public TextBoxWrapper TextBoxWithId(string id)
@@ -550,13 +529,7 @@ namespace FluentBrowserAutomation
 
 		public TextBoxWrapper TextBoxWithLabel(string label)
 		{
-			var input = InputWithLabel(label);
-			var textBoxWrapper = input as TextBoxWrapper;
-			if (textBoxWrapper != null)
-			{
-				return textBoxWrapper;
-			}
-			return new TextBoxWrapper(null, "Textbox with label '" + label + "'", input.BrowserContext);
+			return InputWithLabel(label).AsTextBox("Textbox with label '" + label + "'");
 		}
 
 		public IEnumerable<TextBoxWrapper> TextBoxes()
@@ -564,6 +537,44 @@ namespace FluentBrowserAutomation
 			var textBoxes = this.GetElements(By.XPath("//textarea|//input[@type='text']"))
 				.Select(x => new TextBoxWrapper(x, "text box or textarea", this));
 			return textBoxes;
+		}
+
+		public IBrowserContext TryAndWaitUntil(Func<IBrowserContext, bool> func, Func<IBrowserContext, bool> waitOn, int secondsToWait = 5, int totalNumberOfRetries = 1, string errorMessage = null)
+		{
+			var numberOfTries = 0;
+			Exception caughtException = null;
+
+			while (numberOfTries < totalNumberOfRetries)
+			{
+				func(this);
+				var wait = new WebDriverWait(Browser, TimeSpan.FromSeconds(secondsToWait));
+				try
+				{
+					var result = wait.Until(b => waitOn(this));
+					if (result)
+					{
+						return this;
+					}
+				}
+					// ReSharper disable once EmptyGeneralCatchClause
+				catch (Exception exception)
+				{
+					caughtException = exception;
+				}
+
+				numberOfTries++;
+			}
+
+			if (caughtException != null)
+			{
+				if (errorMessage != null)
+				{
+					throw new ArgumentException(
+						"WaitUntil '" + errorMessage + "' caught: " + caughtException.Message, caughtException);
+				}
+				throw new ArgumentException(caughtException.Message, caughtException);
+			}
+			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
 		}
 
 		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, int secondsToWait = 10, string errorMessage = null)
@@ -575,70 +586,66 @@ namespace FluentBrowserAutomation
 			{
 				try
 				{
-					if (func(this))
+					var result = func(this);
+					if (result)
 					{
 						return this;
 					}
+					Thread.Sleep(_timeToWait);
 				}
-// ReSharper disable once EmptyGeneralCatchClause
 				catch (Exception exception)
 				{
-					caughtException = exception;
+					if (exception.Message.Contains("stale element reference"))
+					{
+						caughtException = exception;
+						continue;
+					}
+					if (errorMessage != null)
+					{
+						throw new ArgumentException("WaitUntil '" + errorMessage + "' caught: " + exception.Message, exception);
+					}
+					throw new ArgumentException(exception.Message, exception);
 				}
-				Thread.Sleep(TimeSpan.FromSeconds(.25));
 			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
+
 			if (caughtException != null)
 			{
-				if (errorMessage != null)
-				{
-					throw new ArgumentException("WaitUntil '" + errorMessage + "' caught: " + caughtException.Message, caughtException);
-				}
-				throw new ArgumentException(caughtException.Message, caughtException);
+				throw new ArgumentException("WaitUntil '" + errorMessage + "' caught: " + caughtException.Message, caughtException);
 			}
 			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
 		}
 
-        public IBrowserContext TryAndWaitUntil(Func<IBrowserContext, bool> func, Func<IBrowserContext, bool> waitOn, int secondsToWait = 5, int totalNumberOfRetries = 1, string errorMessage = null)
+		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, Func<string> buildActivityDescriptionMessage, int secondsToWait = 10)
 		{
-		    int numberOfTries = 0;
-            Exception caughtException = null;
-
-            while (numberOfTries < totalNumberOfRetries)
-            {
-                func(this);
-
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-                do
-                {
-                    try
-                    {
-                        if (waitOn(this))
-                        {
-                            return this;
-                        }
-                    }
-                        // ReSharper disable once EmptyGeneralCatchClause
-                    catch (Exception exception)
-                    {
-                        caughtException = exception;
-                    }
-                    Thread.Sleep(TimeSpan.FromSeconds(.25));
-                } while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
-                
-                numberOfTries++;
-            }
-
-            if (caughtException != null)
-            {
-                if (errorMessage != null)
-                {
-                    throw new ArgumentException(
-                        "WaitUntil '" + errorMessage + "' caught: " + caughtException.Message, caughtException);
-                }
-                throw new ArgumentException(caughtException.Message, caughtException);
-            }
-            throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+			Exception caughtException = null;
+			do
+			{
+				try
+				{
+					var result = func(this);
+					if (result)
+					{
+						return this;
+					}
+					Thread.Sleep(_timeToWait);
+				}
+				catch (Exception exception)
+				{
+					if (exception.Message.Contains("stale element reference"))
+					{
+						caughtException = exception;
+						continue;
+					}
+					throw new ArgumentException("WaitUntil '" + buildActivityDescriptionMessage() + "' caught: " + exception.Message, exception);
+				}
+			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
+			if (caughtException != null)
+			{
+				throw new ArgumentException("WaitUntil '" + buildActivityDescriptionMessage() + "' caught: " + caughtException.Message, caughtException);
+			}
+			throw new AssertionException(buildActivityDescriptionMessage() ?? "state being waited upon never happened.");
 		}
 
 		public string BaseUrl
@@ -654,87 +661,89 @@ namespace FluentBrowserAutomation
 
 	internal static class IBrowserContextExtensions
 	{
-		internal static IEnumerable<IWebElement> GetElements(this IBrowserContext browserContext, By @by, Func<IWebElement, bool> isMatch = null)
+		internal static IEnumerable<RemoteWebElementWrapper> GetElements(this IBrowserContext browserContext, By @by, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
-			var result = browserContext.Browser.FindElements(@by).AsParallel();
-			if (isMatch != null)
-			{
-				result = result.Where(isMatch);
-			}
-			return result;
+			Func<IEnumerable<IWebElement>> result = () => browserContext.Browser.FindElements(@by);
+			var items = result().Select(x => new RemoteWebElementWrapper(null, x));
+			return isMatch != null ? items.Where(isMatch) : items;
 		}
 
-		internal static IEnumerable<IWebElement> GetElementsByClassName(this IBrowserContext browserContext, string className, Func<IWebElement, bool> isMatch = null)
+		internal static IEnumerable<RemoteWebElementWrapper> GetElementsByClassName(this IBrowserContext browserContext, string className, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			return browserContext.GetElements(By.ClassName(className), isMatch);
 		}
 
-		internal static IEnumerable<IWebElement> GetElementsByClassNameAndTagName(this IBrowserContext browserContext, string className, string tagName)
+		internal static IEnumerable<RemoteWebElementWrapper> GetElementsByClassNameAndTagName(this IBrowserContext browserContext, string className, string tagName)
 		{
 			var xPath = By.XPath("//" + tagName + "[contains(@class, '" + className + "')]");
 			return browserContext.GetElements(xPath);
 		}
 
-		internal static IEnumerable<IWebElement> GetElementsByTagName(this IBrowserContext browserContext, string tag, Func<IWebElement, bool> isMatch = null)
+		internal static IEnumerable<RemoteWebElementWrapper> GetElementsByTagName(this IBrowserContext browserContext, string tag, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			return browserContext.GetElements(By.TagName(tag), isMatch);
 		}
 
-		internal static IEnumerable<IWebElement> GetInputs(this IBrowserContext browserContext, Func<IWebElement, bool> isMatch = null)
+		internal static IEnumerable<RemoteWebElementWrapper> GetInputs(this IBrowserContext browserContext, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			return browserContext.GetElementsByTagName("input", isMatch);
 		}
 
-		internal static IEnumerable<IWebElement> GetInputsByType(this IBrowserContext browserContext, params string[] type)
+		internal static IEnumerable<RemoteWebElementWrapper> GetInputsByType(this IBrowserContext browserContext, params string[] type)
 		{
 			return browserContext.GetElements(By.XPath("//input[@type='" + type + "']"));
 		}
 
-		internal static IEnumerable<IWebElement> GetInputsByTypeAndName(this IBrowserContext browserContext, string type, string name, Func<IWebElement, bool> isMatch = null)
+		internal static IEnumerable<RemoteWebElementWrapper> GetInputsByTypeAndName(this IBrowserContext browserContext, string type, string name, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			return browserContext.GetElements(By.XPath("//input[@type='" + type + "' and @name='" + name + "']"), isMatch);
 		}
 
-		internal static IWebElement TryGetElement(this IBrowserContext browserContext, By by, Func<IWebElement, bool> isMatch = null)
+		internal static RemoteWebElementWrapper TryGetElement(this IBrowserContext browserContext, By by, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
-			return browserContext.GetElements(@by, isMatch).FirstOrDefault();
+			Func<IWebElement> howToGetIt = () =>
+			{
+				var item = browserContext.GetElements(@by, isMatch).FirstOrDefault();
+				return item == null ? null : item.RemoteWebElement;
+			};
+			return new RemoteWebElementWrapper(howToGetIt);
 		}
 
-		internal static IWebElement TryGetElementById(this IBrowserContext browserContext, string id, Func<IWebElement, bool> isMatch = null)
+		internal static RemoteWebElementWrapper TryGetElementById(this IBrowserContext browserContext, string id, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			return browserContext.TryGetElement(By.Id(id), isMatch);
 		}
 
-		internal static IWebElement TryGetElementByIdAndTagName(this IBrowserContext browserContext, string id, params string[] tagNames)
+		internal static RemoteWebElementWrapper TryGetElementByIdAndTagName(this IBrowserContext browserContext, string id, params string[] tagNames)
 		{
 			var query = String.Join("|", tagNames.Select(tagName => "//" + tagName + "[@id='" + id + "']"));
 			return browserContext.TryGetElement(By.XPath(query));
 		}
 
-		internal static IWebElement TryGetElementByIdAndType(this IBrowserContext browserContext, string id, params string[] types)
+		internal static RemoteWebElementWrapper TryGetElementByIdAndType(this IBrowserContext browserContext, string id, params string[] types)
 		{
 			var typeQuery = String.Join(" or ", types.Select(x => "@type = '" + x + "'"));
 			return browserContext.TryGetElement(By.XPath("//*[@id='" + id + "' and (" + typeQuery + ")]"));
 		}
 
-		internal static IWebElement TryGetElementByIdAndTypeAndValue(this IBrowserContext browserContext, string id, string type, string value)
+		internal static RemoteWebElementWrapper TryGetElementByIdAndTypeAndValue(this IBrowserContext browserContext, string id, string type, string value)
 		{
-			return browserContext.TryGetElement(By.XPath("//*[@id='" + id + "' and @type='" + type + "' and @value='" + value.Replace("'", "&apos;") + "']"));
+			return browserContext.TryGetElement(By.XPath("//*[@id='" + id + "' and @type='" + type + "' and " + value.EscapeForXpath("@value") + "]"));
 		}
 
-		internal static IWebElement TryGetElementByNameAndTypeAndValue(this IBrowserContext browserContext, string name, string type, string value)
-		{
-			return browserContext.TryGetElement(By.XPath("//*[@name='" + name + "' and @type='" + type + "' and @value='" + value.Replace("'", "&apos;") + "']"));
-		}
-
-        internal static IWebElement TryGetElementByNameAndData(this IBrowserContext browserContext, string name, string dataId, string dataValue)
-		{
-			return browserContext.TryGetElement(By.XPath("//*[@name='" + name + "' and @data-"+ dataId +"='" + dataValue.Replace("'", "&apos;") + "']"));
-		}
-
-		internal static IWebElement TryGetElementByName(this IBrowserContext browserContext, string name, Func<IWebElement, bool> isMatch = null)
+		internal static RemoteWebElementWrapper TryGetElementByName(this IBrowserContext browserContext, string name, Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			return browserContext.TryGetElement(By.Name(name), isMatch);
+		}
+
+		internal static RemoteWebElementWrapper TryGetElementByNameAndData(this IBrowserContext browserContext, string name, string dataId, string dataValue)
+		{
+			return browserContext.TryGetElement(By.XPath("//*[@name='" + name + "' and " + dataValue.EscapeForXpath("@data-" + dataId) + "]"));
+		}
+
+		internal static RemoteWebElementWrapper TryGetElementByNameAndTypeAndValue(this IBrowserContext browserContext, string name, string type, string value)
+		{
+			return browserContext.TryGetElement(By.XPath("//*[@name='" + name + "' and @type='" + type + "' and " + value.EscapeForXpath("@value") + "]"));
 		}
 	}
 }

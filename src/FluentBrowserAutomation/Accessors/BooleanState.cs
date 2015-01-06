@@ -6,20 +6,14 @@ namespace FluentBrowserAutomation.Accessors
 {
 	public interface IReadOnlyBooleanState
 	{
+		bool IsFalse { get; }
 		bool IsTrue { get; }
-		void ShouldBeFalse();
-		void ShouldBeFalse(string errorMessage);
-		void ShouldBeTrue();
-		void ShouldBeTrue(string errorMessage);
+		void ShouldBeFalse(string errorMessage = null);
+		void ShouldBeTrue(string errorMessage = null);
 	}
 
 	public class BooleanState : IReadOnlyBooleanState
 	{
-		private readonly Func<bool> _getState;
-		private readonly Action<bool> _setState;
-		private readonly string _unexpectedlyFalseMessage;
-		private readonly string _unexpectedlyTrueMessage;
-
 		public BooleanState(string unexpectedlyFalseMessage,
 			string unexpectedlyTrueMessage, Func<bool> getState)
 			: this(unexpectedlyFalseMessage, unexpectedlyTrueMessage, getState, null)
@@ -34,34 +28,33 @@ namespace FluentBrowserAutomation.Accessors
 			_setState = setState;
 		}
 
-		public bool IsTrue
-		{
-			get { return _getState(); }
-		}
-
-		public void ShouldBeFalse()
-		{
-			IsTrue.ShouldBeFalse(_unexpectedlyTrueMessage);
-		}
-
-		public void ShouldBeFalse(string errorMessage)
-		{
-			IsTrue.ShouldBeFalse(errorMessage);
-		}
-
-		public void ShouldBeTrue()
-		{
-			IsTrue.ShouldBeTrue(_unexpectedlyFalseMessage);
-		}
-
-		public void ShouldBeTrue(string errorMessage)
-		{
-			IsTrue.ShouldBeTrue(errorMessage);
-		}
+		private readonly Func<bool> _getState;
+		private readonly Action<bool> _setState;
+		private readonly string _unexpectedlyFalseMessage;
+		private readonly string _unexpectedlyTrueMessage;
 
 		public void SetValueTo(bool state)
 		{
 			_setState(state);
+		}
+
+		public void ShouldBeFalse(string errorMessage = null)
+		{
+			IsFalse.ShouldBeTrue(errorMessage ?? _unexpectedlyTrueMessage);
+		}
+
+		public void ShouldBeTrue(string errorMessage = null)
+		{
+			IsTrue.ShouldBeTrue(errorMessage ?? _unexpectedlyFalseMessage);
+		}
+
+		public bool IsFalse
+		{
+			get { return !IsTrue; }
+		}
+		public bool IsTrue
+		{
+			get { return _getState(); }
 		}
 	}
 }

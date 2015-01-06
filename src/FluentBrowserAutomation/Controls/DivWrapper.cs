@@ -1,18 +1,18 @@
 using FluentBrowserAutomation.Accessors;
 
-using OpenQA.Selenium;
-
 namespace FluentBrowserAutomation.Controls
 {
-	public class DivWrapper : BasicInfoWrapper
+	public class DivWrapper : BasicInfoWrapper, IAmVisualElement
 	{
-		public DivWrapper(IWebElement div, string howFound, IBrowserContext browserContext)
+		public DivWrapper(RemoteWebElementWrapper div, string howFound, IBrowserContext browserContext)
 			: base(div, howFound, browserContext)
 		{
 		}
 
 		public ReadOnlyText Text()
 		{
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+
 			return new ReadOnlyText(HowFound, Element.Text);
 		}
 	}

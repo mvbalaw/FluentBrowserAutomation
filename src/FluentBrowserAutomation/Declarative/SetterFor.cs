@@ -6,57 +6,35 @@ using FluentAssert;
 using FluentBrowserAutomation.Controls;
 using FluentBrowserAutomation.Extensions;
 
-using OpenQA.Selenium;
-
 namespace FluentBrowserAutomation.Declarative
 {
 	public static class SetterFor
 	{
-		private static IAmInputThatCanBeChanged GetInputElement(IBrowserContext browserContext, IWebElement control, string howFound)
+		private static IAmGenericInputThatCanBeChanged GetInputElement(IBrowserContext browserContext, RemoteWebElementWrapper control, string howFound)
 		{
-			if (control.IsTextBox())
-			{
-				return new TextBoxWrapper(control, howFound, browserContext);
-			}
-			if (control.IsDropDownList())
-			{
-				return new DropDownListWrapper(control, howFound, browserContext);
-			}
-			if (control.IsCheckBox())
-			{
-				return new CheckBoxWrapper(control, howFound, browserContext);
-			}
-			if (control.IsRadioOption())
-			{
-				return new RadioOptionWrapper(control, howFound, browserContext);
-			}
-			if (control.IsFileUpload())
-			{
-				return new FileUploadWrapper(control, howFound, browserContext);
-			}
-
-			return new MissingInputWrapper(howFound, browserContext);
+			return new GenericInputThatCanBeChangedWrapper(control,howFound, browserContext);
 		}
 
-		public static IAmInputThatCanBeChanged InputWithClassName(this IBrowserContext browserContext, string className)
+		public static IAmGenericInputThatCanBeChanged InputWithClassName(this IBrowserContext browserContext, string className)
 		{
 			var control = browserContext.GetElementsByClassName(className).FirstOrDefault();
 			var howFound = String.Format("Input with class '{0}'", className);
 			return GetInputElement(browserContext, control, howFound);
 		}
 
-		public static IAmInputThatCanBeChanged InputWithId(this IBrowserContext browserContext, string id)
+		public static IAmGenericInputThatCanBeChanged InputWithId(this IBrowserContext browserContext, string id)
 		{
 			var control = browserContext.TryGetElementById(id);
 			var howFound = String.Format("Input with id '{0}'", id);
 			return GetInputElement(browserContext, control, howFound);
 		}
 
-		public static IAmInputThatCanBeChanged InputWithLabel(this IBrowserContext browserContext, string labelText)
+		public static IAmGenericInputThatCanBeChanged InputWithLabel(this IBrowserContext browserContext, string labelText)
 		{
-			var labels = browserContext.Labels();
-			var label = labels.FirstOrDefault(x => ((string)x.Text()).Trim() == labelText.Trim());
-			label.ShouldNotBeNull(String.Format("Could not find Label with text '{0}'", labelText.Trim()));
+			LabelWrapper label = null;
+			var trimmedLabelText = labelText.Trim();
+			browserContext.WaitUntil(x => (label = x.Labels().FirstOrDefault(y => y.Text().Text.Trim().Equals(trimmedLabelText))) != null, () => "wait for label with text '" + trimmedLabelText + "' to exist, found: " + String.Join(", ", browserContext.Labels().Select(x => x.Text().Text).ToArray()));
+			label.ShouldNotBeNull(String.Format("Could not find Label with text '{0}'", trimmedLabelText));
 
 //// ReSharper disable PossibleNullReferenceException
 			var itsLinkedControlId = label.For;
@@ -68,7 +46,7 @@ namespace FluentBrowserAutomation.Declarative
 			return GetInputElement(browserContext, control, howFound);
 		}
 
-		public static IAmInputThatCanBeChanged InputWithValue(this IBrowserContext browserContext, string value)
+		public static dynamic InputWithValue(this IBrowserContext browserContext, string value)
 		{
 			var textBoxes = browserContext.TextBoxes();
 			var textBoxesWithValue = textBoxes.Where(x => ((string)x.Text()).Trim() == value.Trim()).ToList();
@@ -88,22 +66,24 @@ namespace FluentBrowserAutomation.Declarative
 			elements.Count.ShouldBeLessThan(2, string.Format("Unexpectedly found multiple fields with value '{0}'", value));
 
 			var howFound = "Input with value '" + value + "'";
-			var element = elements.FirstOrDefault();
 
 			if (textBoxesWithValue.Any())
 			{
-				var input = textBoxesWithValue.First();
-				input.HowFound = howFound;
+				var input = new TextBoxWrapper(textBoxesWithValue.First().Element, howFound, browserContext);
 				return input;
 			}
 			if (dropDownsWithValue.Any())
 			{
-				var input = dropDownsWithValue.First();
-				input.HowFound = howFound;
+				var input = new DropDownListWrapper(dropDownsWithValue.First().Element, howFound, browserContext);
 				return input;
 			}
 
-			return GetInputElement(browserContext, element, howFound);
+			var remoteWebElementWrapper = checkboxesAndRadiosWithValue.First();
+			if (remoteWebElementWrapper.IsCheckBox())
+			{
+				return new CheckBoxWrapper(remoteWebElementWrapper, howFound, browserContext);
+			}
+			return new RadioOptionWrapper(remoteWebElementWrapper, howFound, browserContext);
 		}
 	}
 }

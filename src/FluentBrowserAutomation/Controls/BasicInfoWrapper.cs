@@ -1,5 +1,3 @@
-using OpenQA.Selenium;
-
 namespace FluentBrowserAutomation.Controls
 {
 	public class BasicInfoWrapper : IHaveBasicInfo
@@ -7,7 +5,7 @@ namespace FluentBrowserAutomation.Controls
 		private string _id;
 		private string _name;
 
-		public BasicInfoWrapper(IWebElement element, string howFound, IBrowserContext browserContext)
+		public BasicInfoWrapper(RemoteWebElementWrapper element, string howFound, IBrowserContext browserContext)
 		{
 			Element = element;
 			HowFound = howFound;
@@ -16,7 +14,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public IBrowserContext BrowserContext { get; private set; }
 
-		public IWebElement Element { get; private set; }
+		public RemoteWebElementWrapper Element { get; private set; }
 
 		public string Id
 		{
@@ -24,7 +22,7 @@ namespace FluentBrowserAutomation.Controls
 			{
 				if (_id == null)
 				{
-					this.Exists().ShouldBeTrue();
+					BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage: "wait for " + HowFound + " to exist");
 					_id = Element.GetAttribute("id");
 				}
 				return _id;
@@ -37,7 +35,7 @@ namespace FluentBrowserAutomation.Controls
 			{
 				if (_name == null)
 				{
-					this.Exists().ShouldBeTrue();
+					BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage: "wait for " + HowFound + " to exist");
 					_name = Element.GetAttribute("name");
 				}
 				return _name;

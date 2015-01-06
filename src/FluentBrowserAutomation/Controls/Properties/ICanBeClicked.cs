@@ -3,6 +3,7 @@ using System;
 using OpenQA.Selenium.Remote;
 
 // ReSharper disable once CheckNamespace
+
 namespace FluentBrowserAutomation
 {
 // ReSharper disable once RedundantExtendsListEntry
@@ -14,11 +15,12 @@ namespace FluentBrowserAutomation
 	{
 		public static void Click(this ICanBeClicked element)
 		{
-			element.Exists().ShouldBeTrue();
+			element.BrowserContext.WaitUntil(x => element.IsVisible().IsTrue, errorMessage:"wait for " + element.HowFound + " to be visible");
+
 			var disableable = element as ICouldBeDisabled;
 			if (disableable != null)
 			{
-				disableable.IsEnabled().ShouldBeTrue();
+				element.BrowserContext.WaitUntil(x => disableable.IsEnabled().IsTrue, errorMessage:"wait for " + element.HowFound + " to be enabled");
 			}
 			var needsFoscus = element as INeedFocus;
 			if (needsFoscus != null)
@@ -31,9 +33,10 @@ namespace FluentBrowserAutomation
 // ReSharper disable once SuggestBaseTypeForParameter
 		private static bool ClickIt(ICanBeClicked element)
 		{
+			var webElement = element.Element;
 			try
 			{
-				element.Element.Click();
+				webElement.Click();
 				return true;
 			}
 			catch (InvalidOperationException invalidOperationException)
@@ -42,12 +45,13 @@ namespace FluentBrowserAutomation
 				if (invalidOperationException.Message.Contains("Other element would receive the click"))
 				{
 					// try scrolling down to the element
-					for (var yOffset = 50; yOffset < ((RemoteWebElement)element.Element).Location.Y; yOffset += 250)
+					var yLocation = ((RemoteWebElement)webElement.RemoteWebElement).Location.Y;
+					for (var yOffset = 50; yOffset < yLocation; yOffset += 250)
 					{
 						try
 						{
 							element.ScrollToIt(yOffset);
-							element.Element.Click();
+							webElement.Click();
 							return true;
 						}
 						catch (InvalidOperationException invalidOperationException2)

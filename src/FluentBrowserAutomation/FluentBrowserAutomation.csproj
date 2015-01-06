@@ -61,6 +61,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\JetBrains.Annotations\JetBrains.Annotations.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -93,18 +94,21 @@
     <Compile Include="Controls\Children.cs" />
     <Compile Include="Controls\ContainerWrapper.cs" />
     <Compile Include="Controls\FileUploadWrapper.cs" />
+    <Compile Include="Controls\GenericNavigationControl.cs" />
     <Compile Include="Controls\ImageWrapper.cs" />
     <Compile Include="Controls\ListWrapper.cs" />
     <Compile Include="Controls\MissingInputWrapper.cs" />
+    <Compile Include="Controls\Properties\IAmGenericInputThatCanBeChanged.cs" />
     <Compile Include="Controls\Properties\IAmInputThatCanBeChanged.cs" />
     <Compile Include="Controls\Properties\IAmSelectionInput.cs" />
     <Compile Include="Controls\Properties\IAmTextInput.cs" />
-    <Compile Include="Controls\Properties\IAmToggleableInput.cs" />
     <Compile Include="Controls\Properties\IAmVisualElement.cs" />
     <Compile Include="Controls\Properties\ICanBeClicked.cs" />
     <Compile Include="Controls\Properties\ICouldBeDisabled.cs" />
     <Compile Include="Controls\Properties\IHaveBasicInfo.cs" />
     <Compile Include="Controls\Properties\INeedFocus.cs" />
+    <Compile Include="Controls\StringExtensions.cs" />
+    <Compile Include="Declarative\GenericInputThatCanBeChangedWrapper.cs" />
     <Compile Include="Extensions\IPageWrapper.cs" />
     <Compile Include="Framework\BrowserManager.cs" />
     <Compile Include="Controls\ButtonWrapper.cs" />
@@ -129,11 +133,12 @@
     <Compile Include="Declarative\SetterFor.cs" />
     <Compile Include="Extensions\ControlWrapperExtensions.cs" />
     <Compile Include="Extensions\ISelectListExtensions.cs" />
-    <Compile Include="Extensions\IWebElementExtensions.cs" />
+    <Compile Include="Extensions\RemoteWebElementWrapperExtensions.cs" />
     <Compile Include="BrowserContext.cs" />
     <Compile Include="NavigationControlWrapper.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteWebElementWrapper.cs" />
     <Compile Include="With.cs" />
   </ItemGroup>
   <ItemGroup>

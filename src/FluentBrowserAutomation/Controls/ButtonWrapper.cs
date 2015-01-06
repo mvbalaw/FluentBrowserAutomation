@@ -1,16 +1,15 @@
 using FluentBrowserAutomation.Accessors;
-using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Controls
 {
 	public class ButtonWrapper : BasicInfoWrapper, INavigationControl
 	{
-		private string _text;
-
-		public ButtonWrapper(IWebElement button, string howFound, IBrowserContext browser)
+		public ButtonWrapper(RemoteWebElementWrapper button, string howFound, IBrowserContext browser)
 			: base(button, howFound, browser)
 		{
 		}
+
+		private string _text;
 
 		public string Text
 		{
