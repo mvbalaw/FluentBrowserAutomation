@@ -604,7 +604,7 @@ namespace FluentBrowserAutomation
 					{
 						throw new ArgumentException("WaitUntil '" + errorMessage + "' caught: " + exception.Message, exception);
 					}
-					onthrow new ArgumentException(exception.Message, exception);
+					throw new ArgumentException(exception.Message, exception);
 				}
 			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
 
