@@ -42,10 +42,10 @@ namespace FluentBrowserAutomation
 			catch (InvalidOperationException invalidOperationException)
 			{
 				element.Focus();
-				if (invalidOperationException.Message.Contains("Other element would receive the click"))
+                if (invalidOperationException.Message.Contains("Other element would receive the click") || invalidOperationException.Message.Contains("Element is not clickable at point"))
 				{
 					// try scrolling down to the element
-					var yLocation = ((RemoteWebElement)webElement.RemoteWebElement).Location.Y;
+					var yLocation = ((RemoteWebElement)webElement.RemoteWebElement).Location.Y + 100;
 					for (var yOffset = 50; yOffset < yLocation; yOffset += 250)
 					{
 						try
@@ -56,7 +56,7 @@ namespace FluentBrowserAutomation
 						}
 						catch (InvalidOperationException invalidOperationException2)
 						{
-							if (!invalidOperationException2.Message.Contains("Other element would receive the click"))
+                            if (!invalidOperationException2.Message.Contains("Other element would receive the click") && !invalidOperationException.Message.Contains("Element is not clickable at point"))
 							{
 								throw;
 							}
