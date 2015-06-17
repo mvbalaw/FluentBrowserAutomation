@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 using FluentBrowserAutomation.Accessors;
 using FluentBrowserAutomation.Controls;
@@ -115,7 +114,17 @@ namespace FluentBrowserAutomation
 			var result = new BooleanState(
 				unexpectedlyFalseMessage,
 				unexpectedlyTrueMessage,
-				() => element.Element.Exists);
+				() =>
+				{
+					try
+					{
+						return element.Element.Exists;
+					}
+					catch (Exception)
+					{
+						return false;
+					}
+				});
 			return result;
 		}
 
