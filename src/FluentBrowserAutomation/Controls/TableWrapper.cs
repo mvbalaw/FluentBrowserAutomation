@@ -32,6 +32,16 @@ namespace FluentBrowserAutomation.Controls
             return headers;
         }
 
+        public IEnumerable<TableRowWrapper> Footers()
+        {
+            var allRows = GetRows();
+            var footers = allRows.Where(IsFooterRow)
+                .Select((x, i) =>
+                    new TableRowWrapper(x, String.Format("{0}, footer row with index {1}", HowFound, i),
+                        BrowserContext));
+            return footers;
+        }
+
         private static bool IsFooterRow(RemoteWebElementWrapper row)
         {
             var footer = row.GetParent().TagName.Equals("tfoot");
