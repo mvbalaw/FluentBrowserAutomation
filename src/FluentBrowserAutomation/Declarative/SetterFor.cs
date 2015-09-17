@@ -33,7 +33,7 @@ namespace FluentBrowserAutomation.Declarative
 		{
 			LabelWrapper label = null;
 			var trimmedLabelText = labelText.Trim();
-			browserContext.WaitUntil(x => (label = x.Labels().FirstOrDefault(y => y.Text().Text.Trim().Equals(trimmedLabelText))) != null, () => "wait for label with text '" + trimmedLabelText + "' to exist, found: " + String.Join(", ", browserContext.Labels().Select(x => x.Text().Text).ToArray()));
+			browserContext.WaitUntil(x => (label = x.LabelsWithText(trimmedLabelText).FirstOrDefault(y=>y.Element.RemoteWebElement.Displayed)) != null, () => "wait for label with text '" + trimmedLabelText + "' to exist, found: " + String.Join(", ", browserContext.Labels().Select(x => x.Text().Text).ToArray()));
 			label.ShouldNotBeNull(String.Format("Could not find Label with text '{0}'", trimmedLabelText));
 
 //// ReSharper disable PossibleNullReferenceException

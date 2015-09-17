@@ -9,7 +9,6 @@ using FluentBrowserAutomation.Extensions;
 using JetBrains.Annotations;
 
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
 namespace FluentBrowserAutomation.Controls
 {
@@ -33,15 +32,29 @@ namespace FluentBrowserAutomation.Controls
 		private IEnumerable<RemoteWebElementWrapper> GetOptionsWithText(string text)
 		{
 			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
-			var children = Element.FindElements(By.XPath("//option[" + text.EscapeForXpath("normalize-space(text())") + "]"));
-			return children.Select(x => new RemoteWebElementWrapper(null, x));
+			var ddlId = Element.GetAttribute("id");
+			var selector = By.XPath("//select[" + ddlId.EscapeForXpath("@id") + "]/option[" + text.EscapeForXpath("normalize-space(text())") + "]");
+			var children = BrowserContext.GetElements(selector);
+			return children;
+		}
+
+		private IEnumerable<RemoteWebElementWrapper> GetOptionsWithTextOrValue(string toFind)
+		{
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			var ddlId = Element.GetAttribute("id");
+			var selector = By.XPath("//select[" + ddlId.EscapeForXpath("@id") + "]/option[" + toFind.EscapeForXpath("normalize-space(text())")
+				+ " or " + toFind.EscapeForXpath("@value") + "]");
+			var children = BrowserContext.GetElements(selector);
+			return children;
 		}
 
 		private IEnumerable<RemoteWebElementWrapper> GetOptionsWithValue(string value)
 		{
 			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
-			var children = Element.FindElements(By.XPath("//option[" + value.EscapeForXpath("@value") + "]"));
-			return children.Select(x => new RemoteWebElementWrapper(null, x));
+			var ddlId = Element.GetAttribute("id");
+			var selector = By.XPath("//select[" + ddlId.EscapeForXpath("@id") + "]/option[" + value.EscapeForXpath("@value") + "]");
+			var children = BrowserContext.GetElements(selector);
+			return children;
 		}
 
 		public string GetSelectedText()
@@ -76,13 +89,13 @@ namespace FluentBrowserAutomation.Controls
 			if (verifySelected)
 			{
 				var targetDdl = BrowserContext.DropDownListWithId(id + SideBySideIdMarker + SideBySideIdDestinationSuffix);
-				BrowserContext.WaitUntil(x => (targetDdl.GetOptionsWithText(text).Any()) || (targetDdl.GetOptionsWithValue(text).Any()), errorMessage: "Failed to set selected value of " + HowFound + " to '" + text + "'");
+				BrowserContext.WaitUntil(x => targetDdl.GetOptionsWithTextOrValue(text).Any(), errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
 			}
 		}
 
 		public bool HasOption(string expected)
 		{
-			return Options.Any(x => x.Text == expected);
+			return GetOptionsWithText(expected).Any();
 		}
 
 		private bool HasSideBySide(string id)
@@ -93,7 +106,7 @@ namespace FluentBrowserAutomation.Controls
 		public bool HasTextValue(string expected)
 		{
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
-			return Options.Any(x => x.Text == expected);
+			return GetOptionsWithText(expected).Any();
 		}
 
 		public OptionWrapper OptionWithText([NotNull] string text)
@@ -159,48 +172,47 @@ namespace FluentBrowserAutomation.Controls
 			}
 		}
 
-		private void SelectOption(DropDownListWrapper dropDown, string text, bool verifySelected)
-		{
-			BrowserContext.WaitUntil(x => dropDown.IsVisible().IsTrue, errorMessage: "wait for " + HowFound + " to be visible");
-			BrowserContext.WaitUntil(x => dropDown.Options.Any(), errorMessage: "wait for " + dropDown.HowFound + " to have options");
-
-			var selector = new SelectElement(dropDown.Element.RemoteWebElement);
-
-			var byText = false;
-			var byValue = false;
-			BrowserContext.WaitUntil(x => (byText = dropDown.GetOptionsWithText(text).Any()) || (byValue = dropDown.GetOptionsWithValue(text).Any()), errorMessage: "wait for " + dropDown.HowFound + " to have option '" + text + "'");
-			if (byText)
-			{
-				selector.SelectByText(text);
-			}
-			else if (byValue)
-			{
-				selector.SelectByValue(text);
-			}
-			if (verifySelected)
-			{
-				BrowserContext.WaitUntil(x => byValue
-					? dropDown.GetOptionsWithValue(text).Any(y => y.Selected)
-					: dropDown.GetOptionsWithText(text).Any(y => y.Selected),
-					errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
-			}
-		}
-
 		public void SelectAnyOptionExcept(params string[] unwantedValues)
 		{
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
-			this.WaitUntil(x => Options.Any(y => !unwantedValues.Contains(y.Text)), errorMessage:"wait for " + HowFound + " to have option other than: " + String.Join(" or ", unwantedValues));
+			RemoteWebElementWrapper option = null;
+			var partialXpath = String.Join(" and ", unwantedValues.Select(y => "not(" + y.EscapeForXpath("text()") + ")"));
+			var ddlId = this.Element.GetAttribute("id");
+			var selector = By.XPath("//select[" + ddlId.EscapeForXpath("@id") + "]/option[" + partialXpath + "]");
+			this.WaitUntil(x => (option = BrowserContext.TryGetElement(selector)) != null,
+				errorMessage:"wait for " + HowFound + " to have option other than: " + String.Join(" or ", unwantedValues));
 
-			var option = Options.First(x => !unwantedValues.Contains(x.Text));
 			Select(option.Text);
+		}
+
+		private void SelectOption(DropDownListWrapper dropDown, string text, bool verifySelected)
+		{
+			BrowserContext.WaitUntil(x => dropDown.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
+
+			RemoteWebElementWrapper option = null;
+			BrowserContext.WaitUntil(x => (option = dropDown.GetOptionsWithTextOrValue(text).FirstOrDefault()) != null, errorMessage:"wait for " + dropDown.HowFound + " to have option '" + text + "'");
+			if (option != null)
+			{
+				option.Click();
+			}
+			if (verifySelected)
+			{
+				BrowserContext.WaitUntil(x => dropDown.GetOptionsWithTextOrValue(text).Any(y => y.Selected),
+					errorMessage:"Failed to set selected value of " + HowFound + " to '" + text + "'");
+			}
 		}
 
 		public void SelectedOptionShouldBeEqualTo(string text)
 		{
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
 			BrowserContext.WaitUntil(x => Options.Any(), errorMessage:"wait for " + HowFound + " options to be visible");
-			var selectedTexts = GetSelectedTexts().ToArray();
-			selectedTexts.Contains(text).ShouldBeTrue("Selected value of " + HowFound + " should be '" + text + "' but is/are '" + String.Join(", ", selectedTexts) + "'");
+			var optionsWithText = GetOptionsWithText(text);
+			var textIsSelected = optionsWithText.Any(x => x.Selected);
+			if (!textIsSelected)
+			{
+				var selectedTexts = GetSelectedTexts().ToArray();
+				selectedTexts.Contains(text).ShouldBeTrue("Selected value of " + HowFound + " should be '" + text + "' but is/are '" + String.Join(", ", selectedTexts) + "'");
+			}
 		}
 
 		public DropDownListWrapper SetTo(string text)
@@ -212,9 +224,8 @@ namespace FluentBrowserAutomation.Controls
 		public void ShouldNotHaveOption(string optionText)
 		{
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
-			Options.Select(x => (string)x.Text)
-				.Any(x => x == optionText)
-				.ShouldBeFalse(HowFound + " should not have option '" + optionText + "' but does.");
+			var anyOptionsWithText = GetOptionsWithText(optionText).Any();
+			anyOptionsWithText.ShouldBeFalse(HowFound + " should not have option '" + optionText + "' but does.");
 		}
 
 		public IEnumerable<OptionWrapper> Options

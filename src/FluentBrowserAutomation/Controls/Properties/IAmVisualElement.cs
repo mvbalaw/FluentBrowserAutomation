@@ -74,7 +74,7 @@ namespace FluentBrowserAutomation
 
 		public static T ShouldBeVisible<T>(this T input, string errorMessage = null) where T : IAmVisualElement
 		{
-			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:errorMessage??("wait for " + input.HowFound + " to be visible"));
+			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:errorMessage ?? ("wait for " + input.HowFound + " to be visible"));
 			return input;
 		}
 
@@ -92,18 +92,18 @@ namespace FluentBrowserAutomation
 			var activeElementId = activeElement.GetAttribute("id");
 			if (activeElementId != null && activeElementId.Trim() != "")
 			{
-				activeElementId.ShouldBeEqualTo(input.Element.GetAttribute("id"), "Cursor is focussed on " + activeElement.TagName+" with id "+activeElementId);
+				activeElementId.ShouldBeEqualTo(input.Element.GetAttribute("id"), "Cursor is focussed on " + activeElement.TagName + " with id " + activeElementId);
 
 				return input;
 			}
-			var activeElementName = activeElement.GetAttribute("name")??"";
-			activeElementName.ShouldBeEqualTo(input.Element.GetAttribute("name"), "Cursor is focussed on " + activeElement.TagName+" with name "+activeElementName);
+			var activeElementName = activeElement.GetAttribute("name") ?? "";
+			activeElementName.ShouldBeEqualTo(input.Element.GetAttribute("name"), "Cursor is focussed on " + activeElement.TagName + " with name " + activeElementName);
 			return input;
 		}
 
 		public static T ShouldNotBeVisible<T>(this T input, string errorMessage = null) where T : IAmVisualElement
 		{
-			input.BrowserContext.WaitUntil(x => input.IsVisible().IsFalse, errorMessage:errorMessage??("wait for " + input.HowFound + " to NOT be visible"));
+			input.BrowserContext.WaitUntil(x => input.Exists().IsFalse || input.IsVisible().IsFalse, errorMessage: errorMessage ?? ("wait for " + input.HowFound + " to NOT be visible"));
 			return input;
 		}
 

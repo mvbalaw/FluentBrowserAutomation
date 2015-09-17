@@ -135,23 +135,9 @@ namespace FluentBrowserAutomation
 
 		private static KeyValuePair<bool, string> IsDisplayed(RemoteWebElementWrapper element)
 		{
-			// adapted from http://blog.coditate.com/2009/07/determining-html-element-visibility.html
 			if (!element.Displayed)
 			{
 				return new KeyValuePair<bool, string>(false, element.TagName);
-			}
-			if (String.Equals(element.TagName, "form", StringComparison.InvariantCultureIgnoreCase))
-			{
-				return new KeyValuePair<bool, string>(true, null);
-			}
-			if (element.GetParent().Exists)
-			{
-				var result = IsDisplayed(element.GetParent());
-				if (result.Key)
-				{
-					return result;
-				}
-				return new KeyValuePair<bool, string>(false, element.TagName + "." + result.Value);
 			}
 			return new KeyValuePair<bool, string>(true, null);
 		}
@@ -164,6 +150,11 @@ namespace FluentBrowserAutomation
 		public static bool IsFileUpload(this IHaveBasicInfo element)
 		{
 			return element is FileUploadWrapper || element.Element.IsFileUpload();
+		}
+
+		public static bool IsNotVisible(this IHaveBasicInfo element)
+		{
+			return element.Exists().IsFalse || element.IsVisible().IsFalse;
 		}
 
 		public static bool IsRadioOption(this IHaveBasicInfo element)

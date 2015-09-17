@@ -24,8 +24,7 @@ namespace FluentBrowserAutomation.Controls
 
         public ListItemWrapper RowWithId(string listItemId)
         {
-            var item = new RemoteWebElementWrapper(() => Element.GetChildElementsByTagName("li")
-	            .FirstOrDefault(x => x.GetAttribute("id") == listItemId));
+            var item = BrowserContext.TryGetElementById(listItemId);
 
             return new ListItemWrapper(item, String.Format("{0}, item with id {1}", HowFound, listItemId), BrowserContext);
         }

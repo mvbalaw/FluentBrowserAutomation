@@ -325,6 +325,7 @@ namespace FluentBrowserAutomation
 					{
 						TryEnsureExists();
 					}
+// ReSharper disable once PossibleNullReferenceException
 					return _remoteElement.Size;
 				}
 				catch (StaleElementReferenceException)

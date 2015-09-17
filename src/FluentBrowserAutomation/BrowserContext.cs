@@ -61,7 +61,9 @@ namespace FluentBrowserAutomation
 		IAmGenericInputThatCanBeChanged InputWithLabel([NotNull] string label);
 		dynamic InputWithValue([NotNull] string value);
 		LabelWrapper LabelWithId([NotNull] string id);
+		LabelWrapper LabelWithText([NotNull] string text);
 		IEnumerable<LabelWrapper> Labels();
+		IEnumerable<LabelWrapper> LabelsWithText([NotNull] string text);
 		LinkWrapper LinkWithId([NotNull] string id);
 		LinkWrapper LinkWithText([NotNull] string text);
 		IEnumerable<LinkWrapper> Links();
@@ -93,7 +95,7 @@ namespace FluentBrowserAutomation
 			[NotNull] Func<IBrowserContext, bool> waitOn, int secondsToWait = 5, int totalNumberOfRetries = 1,
 			string errorMessage = null);
 
-		void WaitForPendingRequests(int milliseconds = 1000);
+		void WaitForPendingRequests(int milliseconds = 250);
 
 		IBrowserContext WaitUntil([NotNull] Func<IBrowserContext, bool> func, int secondsToWait = 10,
 			string errorMessage = null);
@@ -127,8 +129,9 @@ namespace FluentBrowserAutomation
 			var howFound = String.Format("button with visible text '{0}'", text);
 			var button = new ButtonWrapper(new RemoteWebElementWrapper(() =>
 			{
-				var firstOrDefault = Buttons().FirstOrDefault(x => x.Text == text);
-				return firstOrDefault == null ? null : firstOrDefault.Element.RemoteWebElement;
+				var btn = this.TryGetElement(By.XPath("//input[(@type='submit' or @type='button') and " + text.EscapeForXpath("@value")
+					+ "]|//button[" + text.EscapeForXpath("normalize-space(.)") + "]"));
+				return btn == null ? null : btn.RemoteWebElement;
 			}), howFound, this);
 			return button;
 		}
@@ -358,10 +361,27 @@ namespace FluentBrowserAutomation
 			return new LabelWrapper(label, howFound, this);
 		}
 
+		public LabelWrapper LabelWithText(string text)
+		{
+			var howFound = String.Format("label with text '{0}'", text);
+			var xPath = By.XPath("//label[" + text.EscapeForXpath("normalize-space(.)") + "]");
+			var label = this.TryGetElement(xPath);
+
+			return new LabelWrapper(label, howFound, this);
+		}
+
 		public IEnumerable<LabelWrapper> Labels()
 		{
 			const string howFound = "type 'label'";
 			var labels = this.GetElementsByTagName("label");
+			return labels.Select(x => new LabelWrapper(x, howFound, this));
+		}
+
+		public IEnumerable<LabelWrapper> LabelsWithText(string text)
+		{
+			var howFound = String.Format("label with text '{0}'", text);
+			var xPath = By.XPath("//label[" + text.EscapeForXpath("normalize-space(.)") + "]");
+			var labels = this.GetElements(xPath);
 			return labels.Select(x => new LabelWrapper(x, howFound, this));
 		}
 
@@ -402,13 +422,8 @@ namespace FluentBrowserAutomation
 			var htmlEscapedText = HttpUtility.HtmlEncode(text);
 			var howFound = String.Format("link with visible text '{0}'", text);
 			var items = this.GetElements(By.LinkText(text))
-				.Concat(this.GetElementsByTagName("a").Where(x =>
-				{
-					var attribute = x.GetAttribute("innerHTML");
-					return attribute == htmlEscapedText ||
-						attribute == text ||
-						attribute.Trim() == text;
-				})).Select(link => new LinkWrapper(link, howFound, this));
+				.Concat(this.GetElements(By.XPath("//a["+text.EscapeForXpath("text()")+"]|//a["+htmlEscapedText.EscapeForXpath("text()")+"]")))
+				.Select(link => new LinkWrapper(link, howFound, this));
 			return items;
 		}
 
@@ -606,7 +621,7 @@ namespace FluentBrowserAutomation
 			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
 		}
 
-		public void WaitForPendingRequests(int milliseconds = 1000)
+		public void WaitForPendingRequests(int milliseconds = 250)
 		{
 			while (GetPendingRequests() > 0)
 			{
@@ -778,7 +793,8 @@ namespace FluentBrowserAutomation
 			string id, params string[] tagNames)
 		{
 			var query = String.Join("|", tagNames.Select(tagName => "//" + tagName + "[@id='" + id + "']"));
-			return browserContext.TryGetElement(By.XPath(query));
+			var xPath = By.XPath(query);
+			return browserContext.TryGetElement(xPath);
 		}
 
 		internal static RemoteWebElementWrapper TryGetElementByIdAndType(this IBrowserContext browserContext, string id,

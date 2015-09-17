@@ -43,7 +43,7 @@ namespace FluentBrowserAutomation
 			if (input.IsDropDownList())
 			{
 				var dropDown = input.AsDropDownList();
-				return dropDown.Options.Any(x => x.Text == expected);
+				return dropDown.HasOption(expected);
 			}
 			if (input.IsCheckBox())
 			{
