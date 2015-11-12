@@ -1,8 +1,0 @@
-selenium: 
-
-http://selenium-release.storage.googleapis.com/index.html
-
-chromedriver:
-
-http://chromedriver.storage.googleapis.com/index.html
-
