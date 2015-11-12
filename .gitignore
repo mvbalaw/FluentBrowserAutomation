@@ -10,3 +10,4 @@ dist
 CommonAssemblyInfo.cs
 dist.bat
 src/packages
+src/FluentBrowserAutomation/FluentAssert.*
