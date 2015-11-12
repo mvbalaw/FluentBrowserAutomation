@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using FluentBrowserAutomation.Extensions;
 
 namespace FluentBrowserAutomation.Controls

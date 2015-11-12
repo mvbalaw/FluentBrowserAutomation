@@ -74,7 +74,7 @@ namespace FluentBrowserAutomation
 
 		public static T ShouldBeVisible<T>(this T input, string errorMessage = null) where T : IAmVisualElement
 		{
-			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:errorMessage ?? ("wait for " + input.HowFound + " to be visible"));
+			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:errorMessage ?? "wait for " + input.HowFound + " to be visible");
 			return input;
 		}
 
@@ -103,7 +103,7 @@ namespace FluentBrowserAutomation
 
 		public static T ShouldNotBeVisible<T>(this T input, string errorMessage = null) where T : IAmVisualElement
 		{
-			input.BrowserContext.WaitUntil(x => input.Exists().IsFalse || input.IsVisible().IsFalse, errorMessage: errorMessage ?? ("wait for " + input.HowFound + " to NOT be visible"));
+			input.BrowserContext.WaitUntil(x => input.Exists().IsFalse || input.IsVisible().IsFalse, errorMessage: errorMessage ?? "wait for " + input.HowFound + " to NOT be visible");
 			return input;
 		}
 

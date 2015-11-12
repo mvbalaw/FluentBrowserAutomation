@@ -177,7 +177,7 @@ namespace FluentBrowserAutomation.Controls
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
 			RemoteWebElementWrapper option = null;
 			var partialXpath = String.Join(" and ", unwantedValues.Select(y => "not(" + y.EscapeForXpath("text()") + ")"));
-			var ddlId = this.Element.GetAttribute("id");
+			var ddlId = Element.GetAttribute("id");
 			var selector = By.XPath("//select[" + ddlId.EscapeForXpath("@id") + "]/option[" + partialXpath + "]");
 			this.WaitUntil(x => (option = BrowserContext.TryGetElement(selector)) != null,
 				errorMessage:"wait for " + HowFound + " to have option other than: " + String.Join(" or ", unwantedValues));

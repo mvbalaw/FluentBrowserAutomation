@@ -1,4 +1,5 @@
 ﻿using System;
+
 using OpenQA.Selenium;
 
 // ReSharper disable once CheckNamespace

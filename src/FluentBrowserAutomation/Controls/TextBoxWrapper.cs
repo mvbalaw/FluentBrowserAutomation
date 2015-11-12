@@ -52,12 +52,12 @@ namespace FluentBrowserAutomation.Controls
 
 		public void ShouldHaveTextValue(string expected, string errorMessage = null)
 		{
-			BrowserContext.WaitUntil(x => HasTextValue(expected), errorMessage:errorMessage ?? ("wait for " + HowFound + " to have text value '" + expected + "'"));
+			BrowserContext.WaitUntil(x => HasTextValue(expected), errorMessage:errorMessage ?? "wait for " + HowFound + " to have text value '" + expected + "'");
 		}
 
 		public void ShouldNotHaveTextValue(string expected, string errorMessage = null)
 		{
-			BrowserContext.WaitUntil(x => !HasTextValue(expected), errorMessage:errorMessage ?? ("wait for " + HowFound + " to NOT have text value '" + expected + "'"));
+			BrowserContext.WaitUntil(x => !HasTextValue(expected), errorMessage:errorMessage ?? "wait for " + HowFound + " to NOT have text value '" + expected + "'");
 		}
 
 		// unsupported in ChromeDriver1, maybe work in chromedriver2

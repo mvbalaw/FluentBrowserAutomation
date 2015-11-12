@@ -169,7 +169,7 @@ namespace FluentBrowserAutomation
 			input.BrowserContext.WaitUntil(x => textBox.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible");
 			input.BrowserContext.WaitUntil(x =>
 			{
-				var actual = (textBox.Text().Text ?? "");
+				var actual = textBox.Text().Text ?? "";
 				return actual == (expected??"");
 			}, errorMessage:"wait for " + input.HowFound + " to have text '" + expected + "'");
 			textBox.Text().ShouldBeEqualTo(expected ?? "");
