@@ -4,24 +4,24 @@ using System.Runtime.Serialization;
 
 namespace FluentBrowserAutomation
 {
-	public class AssertionException : Exception
+	public class TimeoutException : Exception
 	{
-		protected AssertionException(SerializationInfo info, StreamingContext context)
+		protected TimeoutException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{
 		}
 
-		internal AssertionException(string errorMessage)
+		internal TimeoutException(string errorMessage)
 			: base(errorMessage)
 		{
 		}
 
-		internal AssertionException(string errorMessage, Exception innerException)
+		internal TimeoutException(string errorMessage, Exception innerException)
 			: base(errorMessage, innerException)
 		{
 		}
 
-		internal AssertionException(Exception exception)
+		internal TimeoutException(Exception exception)
 			: base("", exception)
 		{
 		}

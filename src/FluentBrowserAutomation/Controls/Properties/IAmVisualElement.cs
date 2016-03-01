@@ -123,7 +123,7 @@ namespace FluentBrowserAutomation
 				var selectedTexts = dropDown.GetSelectedTexts().ToArray();
 				if (selectedTexts.Length != 1)
 				{
-					throw new ArgumentException("drop down list " + input.HowFound + " must have exactly 1 selected value to call .Text()");
+					throw new AssertionException("drop down list " + input.HowFound + " must have exactly 1 selected value to call .Text()");
 				}
 				return new ReadOnlyText(input.HowFound, selectedTexts[0]);
 			}

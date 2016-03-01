@@ -613,12 +613,12 @@ namespace FluentBrowserAutomation
 			{
 				if (errorMessage != null)
 				{
-					throw new ArgumentException(
+					throw new AssertionException(
 						"WaitUntil '" + errorMessage + "' caught: " + caughtException.Message, caughtException);
 				}
-				throw new ArgumentException(caughtException.Message, caughtException);
+				throw new AssertionException(caughtException.Message, caughtException);
 			}
-			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
+			throw new TimeoutException(errorMessage ?? "state being waited upon never happened.");
 		}
 
 		public void WaitForPendingRequests(int milliseconds = 250)
@@ -648,6 +648,14 @@ namespace FluentBrowserAutomation
 					}
 					Thread.Sleep(_timeToWait);
 				}
+				catch (TimeoutException)
+				{
+					throw;
+				}
+				catch (AssertionException)
+				{
+					throw;
+				}
 				catch (Exception exception)
 				{
 					if (exception.Message.Contains("stale element reference") ||
@@ -658,19 +666,19 @@ namespace FluentBrowserAutomation
 					}
 					if (errorMessage != null)
 					{
-						throw new ArgumentException("WaitUntil '" + errorMessage + "' caught: " + exception.Message,
+						throw new AssertionException("WaitUntil '" + errorMessage + "' caught: " + exception.Message,
 							exception);
 					}
-					throw new ArgumentException(exception.Message, exception);
+					throw new AssertionException(exception.Message, exception);
 				}
 			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
 
 			if (caughtException != null)
 			{
-				throw new ArgumentException("WaitUntil '" + errorMessage + "' caught: " + caughtException.Message,
+				throw new AssertionException("WaitUntil '" + errorMessage + "' caught: " + caughtException.Message,
 					caughtException);
 			}
-			throw new AssertionException(errorMessage ?? "state being waited upon never happened.");
+			throw new TimeoutException(errorMessage ?? "state being waited upon never happened.");
 		}
 
 		public IBrowserContext WaitUntil(Func<IBrowserContext, bool> func, Func<string> buildActivityDescriptionMessage,
@@ -692,6 +700,14 @@ namespace FluentBrowserAutomation
 					}
 					Thread.Sleep(_timeToWait);
 				}
+				catch (TimeoutException)
+				{
+					throw;
+				}
+				catch (AssertionException)
+				{
+					throw;
+				}
 				catch (Exception exception)
 				{
 					if (exception.Message.Contains("stale element reference") ||
@@ -700,17 +716,17 @@ namespace FluentBrowserAutomation
 						caughtException = exception;
 						continue;
 					}
-					throw new ArgumentException(
+					throw new AssertionException(
 						"WaitUntil '" + buildActivityDescriptionMessage() + "' caught: " + exception.Message, exception);
 				}
 			} while (stopwatch.Elapsed.TotalSeconds < secondsToWait);
 			if (caughtException != null)
 			{
-				throw new ArgumentException(
+				throw new AssertionException(
 					"WaitUntil '" + buildActivityDescriptionMessage() + "' caught: " + caughtException.Message,
 					caughtException);
 			}
-			throw new AssertionException(buildActivityDescriptionMessage() ?? "state being waited upon never happened.");
+			throw new TimeoutException(buildActivityDescriptionMessage() ?? "state being waited upon never happened.");
 		}
 
 		public string BaseUrl

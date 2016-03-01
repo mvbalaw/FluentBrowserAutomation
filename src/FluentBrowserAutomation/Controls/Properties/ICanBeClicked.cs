@@ -58,7 +58,7 @@ namespace FluentBrowserAutomation
 						{
                             if (!invalidOperationException2.Message.Contains("Other element would receive the click") && !invalidOperationException.Message.Contains("Element is not clickable at point"))
 							{
-								throw;
+								throw new AssertionException(invalidOperationException);
 							}
 						}
 					}

@@ -142,6 +142,7 @@
     <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteWebElementWrapper.cs" />
+    <Compile Include="TimeoutException.cs" />
     <Compile Include="With.cs" />
   </ItemGroup>
   <ItemGroup>
