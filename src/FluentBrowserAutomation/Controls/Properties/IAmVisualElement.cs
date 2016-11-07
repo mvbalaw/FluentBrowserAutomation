@@ -62,14 +62,20 @@ namespace FluentBrowserAutomation
 			element.BrowserContext.WaitUntil(x => element.Exists().IsTrue, errorMessage:"scroll to " + element.HowFound);
 
 			var webElement = element.Element.RemoteWebElement;
-			var elementPosition = ((RemoteWebElement)webElement).LocationOnScreenOnceScrolledIntoView;
+			ScrollToIt(yOffset, webElement, browser);
+			ScrollToIt(yOffset, webElement, browser);
+		}
+
+		private static void ScrollToIt(int yOffset, IWebElement webElement, IWebDriver browser)
+		{
+			var elementPosition = ((RemoteWebElement) webElement).LocationOnScreenOnceScrolledIntoView;
 			var yPosition = elementPosition.Y + yOffset;
 			if (yPosition < 0)
 			{
 				yPosition = 0;
 			}
 			var js = String.Format("window.scroll({0}, {1})", elementPosition.X, yPosition);
-			((IJavaScriptExecutor)browser).ExecuteScript(js);
+			((IJavaScriptExecutor) browser).ExecuteScript(js);
 		}
 
 		public static T ShouldBeVisible<T>(this T input, string errorMessage = null) where T : IAmVisualElement
