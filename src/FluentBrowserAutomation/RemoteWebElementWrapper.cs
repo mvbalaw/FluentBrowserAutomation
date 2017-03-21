@@ -63,7 +63,7 @@ namespace FluentBrowserAutomation
 			}
 		}
 
-		public IWebElement FindElement(By @by)
+		public IWebElement FindElement(By by)
 		{
 			try
 			{
@@ -72,19 +72,19 @@ namespace FluentBrowserAutomation
 					TryEnsureExists();
 				}
 // ReSharper disable once PossibleNullReferenceException
-				return _remoteElement.FindElement(@by);
+				return _remoteElement.FindElement(by);
 			}
 			catch (StaleElementReferenceException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
 // ReSharper disable once PossibleNullReferenceException
-				return _remoteElement.FindElement(@by);
+				return _remoteElement.FindElement(by);
 			}
 		}
 
 // ReSharper disable once ReturnTypeCanBeEnumerable.Global
-		public ReadOnlyCollection<IWebElement> FindElements(By @by)
+		public ReadOnlyCollection<IWebElement> FindElements(By by)
 		{
 			try
 			{
@@ -93,14 +93,14 @@ namespace FluentBrowserAutomation
 					TryEnsureExists();
 				}
 // ReSharper disable once PossibleNullReferenceException
-				return _remoteElement.FindElements(@by);
+				return _remoteElement.FindElements(by);
 			}
 			catch (StaleElementReferenceException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
 // ReSharper disable once PossibleNullReferenceException
-				return _remoteElement.FindElements(@by);
+				return _remoteElement.FindElements(by);
 			}
 		}
 
