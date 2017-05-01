@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 
 namespace FluentBrowserAutomation.Framework
@@ -97,8 +98,18 @@ namespace FluentBrowserAutomation.Framework
 			var driver = AttachToExistingBrowser<TBrowser>();
 			if (driver == null)
 			{
-				driver = new T();
-				_browsers.Add(driver);
+				if (typeof(T) == typeof(ChromeDriver))
+				{
+					var options = new ChromeOptions();
+					options.AddArgument("disable-infobars");
+					driver = new ChromeDriver(options);
+					_browsers.Add(driver);
+				}
+				else
+				{
+					driver = new T();
+					_browsers.Add(driver);
+				}
 			}
 			if (_initialUrl != null)
 			{
