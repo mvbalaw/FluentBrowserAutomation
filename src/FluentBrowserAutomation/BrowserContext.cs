@@ -742,10 +742,10 @@ namespace FluentBrowserAutomation
 
 	internal static class IBrowserContextExtensions
 	{
-		internal static IEnumerable<RemoteWebElementWrapper> GetElements(this IBrowserContext browserContext, By @by,
+		internal static IEnumerable<RemoteWebElementWrapper> GetElements(this IBrowserContext browserContext, By by,
 			Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
-			Func<IEnumerable<IWebElement>> result = () => browserContext.Browser.FindElements(@by);
+			Func<IEnumerable<IWebElement>> result = () => browserContext.Browser.FindElements(by);
 			var items = result().Select(x => new RemoteWebElementWrapper(null, x));
 			return isMatch != null ? items.Where(isMatch) : items;
 		}
@@ -793,7 +793,7 @@ namespace FluentBrowserAutomation
 		{
 			Func<IWebElement> howToGetIt = () =>
 			{
-				var item = browserContext.GetElements(@by, isMatch).FirstOrDefault();
+				var item = browserContext.GetElements(by, isMatch).FirstOrDefault();
 				return item == null ? null : item.RemoteWebElement;
 			};
 			return new RemoteWebElementWrapper(howToGetIt);
