@@ -102,6 +102,8 @@ namespace FluentBrowserAutomation.Framework
 				{
 					var options = new ChromeOptions();
 					options.AddArgument("disable-infobars");
+					options.AddArgument("safebrowsing-disable-download-protection");
+					options.AddUserProfilePreference("safebrowsing.enabled", true);
 					driver = new ChromeDriver(options);
 					_browsers.Add(driver);
 				}
