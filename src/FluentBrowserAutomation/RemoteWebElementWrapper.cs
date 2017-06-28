@@ -34,7 +34,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				_remoteElement.Clear();
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -54,7 +54,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				_remoteElement.Click();
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -74,7 +74,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				return _remoteElement.FindElement(by);
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -95,7 +95,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				return _remoteElement.FindElements(by);
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -115,7 +115,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				return _remoteElement.GetAttribute(attributeName);
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -135,7 +135,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				return _remoteElement.GetCssValue(propertyName);
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -155,7 +155,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				_remoteElement.SendKeys(text);
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -175,7 +175,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 				_remoteElement.Submit();
 			}
-			catch (StaleElementReferenceException)
+			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
@@ -205,7 +205,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 					return _remoteElement.Displayed;
 				}
-				catch (StaleElementReferenceException)
+				catch (WebDriverException)
 				{
 					_remoteElement = null;
 					TryEnsureExists();
@@ -227,7 +227,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 					return _remoteElement.Enabled;
 				}
-				catch (StaleElementReferenceException)
+				catch (WebDriverException)
 				{
 					_remoteElement = null;
 					TryEnsureExists();
@@ -260,7 +260,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 					return _remoteElement.Location;
 				}
-				catch (StaleElementReferenceException)
+				catch (WebDriverException)
 				{
 					_remoteElement = null;
 					TryEnsureExists();
@@ -285,7 +285,7 @@ namespace FluentBrowserAutomation
 						var x = _remoteElement.TagName;
 					}
 				}
-				catch (StaleElementReferenceException)
+				catch (WebDriverException)
 				{
 					_remoteElement = null;
 					TryEnsureExists();
@@ -306,7 +306,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 					return _remoteElement.Selected;
 				}
-				catch (StaleElementReferenceException)
+				catch (WebDriverException)
 				{
 					_remoteElement = null;
 					TryEnsureExists();
@@ -328,7 +328,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 					return _remoteElement.Size;
 				}
-				catch (StaleElementReferenceException)
+				catch (WebDriverException)
 				{
 					_remoteElement = null;
 					TryEnsureExists();
@@ -352,7 +352,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 						return _tagName = _remoteElement.TagName;
 					}
-					catch (StaleElementReferenceException)
+					catch (WebDriverException)
 					{
 						_remoteElement = null;
 						TryEnsureExists();
@@ -376,7 +376,7 @@ namespace FluentBrowserAutomation
 // ReSharper disable once PossibleNullReferenceException
 					return _remoteElement.Text;
 				}
-				catch (StaleElementReferenceException)
+				catch (WebDriverException)
 				{
 					_remoteElement = null;
 					TryEnsureExists();

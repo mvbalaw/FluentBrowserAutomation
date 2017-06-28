@@ -277,9 +277,16 @@ namespace FluentBrowserAutomation
 			var js = Browser as IJavaScriptExecutor;
 			if (js != null)
 			{
-				var executeScript =
-					js.ExecuteScript(
-						"return (typeof angular !== 'undefined' && angular.element(document.body).injector().get('$http').pendingRequests.length) || 0;");
+				object executeScript;
+				const string script = "return (typeof angular !== 'undefined' && angular.element(document.body).injector().get('$http').pendingRequests.length) || 0;";
+				try
+				{
+					executeScript = js.ExecuteScript(script);
+				}
+				catch (Exception)
+				{
+					executeScript = 1;
+				}
 				pendingRequests = executeScript as int? ?? 0;
 			}
 			return pendingRequests;
