@@ -135,7 +135,7 @@ namespace FluentBrowserAutomation
 
 		private static KeyValuePair<bool, string> IsDisplayed(RemoteWebElementWrapper element)
 		{
-			if (!element.Displayed)
+			if (!element.Displayed || element.GetAttribute("class").Contains("ng-hide"))
 			{
 				return new KeyValuePair<bool, string>(false, element.TagName);
 			}
