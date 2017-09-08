@@ -571,7 +571,7 @@ namespace FluentBrowserAutomation
 		{
 			var howFound = String.Format("text box with id '{0}'", id);
 			var textField =
-				this.TryGetElement(By.XPath("//textarea[@id='" + id + "']|//input[@id='" + id + "' and @type='text']"));
+				this.TryGetElement(By.XPath("//textarea[@id='" + id + "']|//input[@id='" + id + "' and @type='text']|//input[@id='" + id + "' and @type='number']"));
 			return new TextBoxWrapper(textField, howFound, this);
 		}
 
@@ -582,7 +582,7 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<TextBoxWrapper> TextBoxes()
 		{
-			var textBoxes = this.GetElements(By.XPath("//textarea|//input[@type='text']"))
+			var textBoxes = this.GetElements(By.XPath("//textarea|//input[@type='text']|//input[@type='number']"))
 				.Select(x => new TextBoxWrapper(x, "text box or textarea", this));
 			return textBoxes;
 		}

@@ -73,7 +73,8 @@ namespace FluentBrowserAutomation.Extensions
 
 		public static bool IsTextBox(this RemoteWebElementWrapper element)
 		{
-			return element.Exists && (element.TagNameHasValue("input") && element.TypeAttributeHasValue("text") ||
+			return element.Exists && (element.TagNameHasValue("input") && 
+				(element.TypeAttributeHasValue("text") || element.TypeAttributeHasValue("number")) ||
 				element.TagNameHasValue("textarea"));
 		}
 
