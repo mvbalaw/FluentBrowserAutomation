@@ -1,11 +1,9 @@
-//// ReSharper disable CheckNamespace
-// ReSharper disable CheckNamespace
+// ReSharper disable once CheckNamespace
 namespace FluentBrowserAutomation
-// ReSharper restore CheckNamespace
-//// ReSharper restore CheckNamespace
 {
 	public interface IAmSelectionInput
 	{
+		bool HasOption(string expected);
 		void Select(string text);
 	}
 }
