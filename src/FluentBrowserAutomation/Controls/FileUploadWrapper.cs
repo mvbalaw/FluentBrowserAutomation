@@ -1,6 +1,6 @@
 namespace FluentBrowserAutomation.Controls
 {
-	public class FileUploadWrapper : BasicInfoWrapper, IAmTextInput, INeedFocus, IAmInputThatCanBeChanged
+	public class FileUploadWrapper : BasicInfoWrapper, IAmTextInput, INeedFocus, IAmGenericInputThatCanBeChanged
 	{
 		public FileUploadWrapper(RemoteWebElementWrapper element, string howFound, IBrowserContext browserContext)
 			: base(element, howFound, browserContext)

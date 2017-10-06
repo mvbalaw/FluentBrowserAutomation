@@ -3,7 +3,7 @@ using FluentBrowserAutomation.Extensions;
 
 namespace FluentBrowserAutomation.Controls
 {
-	public class CheckBoxWrapper : BasicInfoWrapper, ICanBeClicked, IAmInputThatCanBeChanged, INeedFocus
+	public class CheckBoxWrapper : BasicInfoWrapper, ICanBeClicked, IAmGenericInputThatCanBeChanged, INeedFocus
 	{
 		public CheckBoxWrapper(RemoteWebElementWrapper checkBox, string howFound, IBrowserContext browserContext)
 			: base(checkBox, howFound, browserContext)

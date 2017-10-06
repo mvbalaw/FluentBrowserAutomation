@@ -6,7 +6,7 @@ using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Controls
 {
-	public class TextBoxWrapper : BasicInfoWrapper, IAmInputThatCanBeChanged, IAmTextInput, INeedFocus
+	public class TextBoxWrapper : BasicInfoWrapper, IAmGenericInputThatCanBeChanged, IAmTextInput, INeedFocus
 	{
 		public TextBoxWrapper(RemoteWebElementWrapper textField, string howFound, IBrowserContext browserContext)
 			: base(textField, howFound, browserContext)

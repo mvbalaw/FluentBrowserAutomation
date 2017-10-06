@@ -12,7 +12,7 @@ using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation.Controls
 {
-	public class DropDownListWrapper : BasicInfoWrapper, ICouldBeDisabled, IAmInputThatCanBeChanged, IAmSelectionInput, INeedFocus
+	public class DropDownListWrapper : BasicInfoWrapper, ICouldBeDisabled, IAmGenericInputThatCanBeChanged, IAmSelectionInput, INeedFocus
 	{
 		private const string SideBySideIdDestinationSuffix = "__dx";
 		private const string SideBySideIdMarker = "ms2side";

@@ -2,7 +2,7 @@ using FluentBrowserAutomation.Accessors;
 
 namespace FluentBrowserAutomation.Controls
 {
-	public class RadioOptionWrapper : BasicInfoWrapper, ICouldBeDisabled, ICanBeClicked, IAmInputThatCanBeChanged, INeedFocus
+	public class RadioOptionWrapper : BasicInfoWrapper, ICouldBeDisabled, ICanBeClicked, IAmGenericInputThatCanBeChanged, INeedFocus
 	{
 		public RadioOptionWrapper(RemoteWebElementWrapper radioButton, string howFound, IBrowserContext browserContext)
 			: base(radioButton, howFound, browserContext)
