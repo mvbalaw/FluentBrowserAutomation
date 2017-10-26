@@ -109,13 +109,11 @@ namespace FluentBrowserAutomation
 		public BrowserContext(IBrowserManager browserManager)
 		{
 			_browserManager = browserManager;
-			_timeToWait = TimeSpan.FromSeconds(.25);
 		}
 
 		private IWebDriver _browser;
 
 		private readonly IBrowserManager _browserManager;
-		private readonly TimeSpan _timeToWait;
 
 		public ButtonWrapper ButtonWithId(string id)
 		{
@@ -632,7 +630,7 @@ namespace FluentBrowserAutomation
 		{
 			while (GetPendingRequests() > 0)
 			{
-				Thread.Sleep(milliseconds);
+				new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(milliseconds));
 			}
 		}
 
@@ -653,7 +651,7 @@ namespace FluentBrowserAutomation
 					{
 						return this;
 					}
-					Thread.Sleep(_timeToWait);
+					new ManualResetEvent(false).WaitOne(TimeSpan.FromSeconds(secondsToWait));
 				}
 				catch (TimeoutException)
 				{
@@ -705,7 +703,7 @@ namespace FluentBrowserAutomation
 					{
 						return this;
 					}
-					Thread.Sleep(_timeToWait);
+					new ManualResetEvent(false).WaitOne(TimeSpan.FromSeconds(secondsToWait));
 				}
 				catch (TimeoutException)
 				{
