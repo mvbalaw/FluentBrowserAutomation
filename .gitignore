@@ -11,3 +11,5 @@ CommonAssemblyInfo.cs
 dist.bat
 src/packages
 src/FluentBrowserAutomation/FluentAssert.*
+.vs/
+*.DotSettings

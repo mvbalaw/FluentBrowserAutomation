@@ -132,7 +132,7 @@ namespace FluentBrowserAutomation
 				var btn = this.TryGetElement(By.XPath("//input[(@type='submit' or @type='button') and " + text.EscapeForXpath("@value")
 					+ "]|//button[" + text.EscapeForXpath("normalize-space(.)") + "]"));
 				return btn == null ? null : btn.RemoteWebElement;
-			}), howFound, this);
+			}, Browser), howFound, this);
 			return button;
 		}
 
@@ -196,9 +196,15 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<CheckBoxWrapper> CheckBoxesWithName(string name)
 		{
-			const string howFound = "type 'checkbox'";
 			var checkBoxes = this.GetInputsByTypeAndName("checkbox", name);
-			return checkBoxes.Select(x => new CheckBoxWrapper(x, howFound, this));
+			return checkBoxes.Select((x,i) => CheckBoxWithNameAndIndex(name,i));
+		}
+
+		public CheckBoxWrapper CheckBoxWithNameAndIndex(string name, int zeroBasedIndex)
+		{
+			var howFound = String.Format("checkbox with name '{0}' and index '{1}'", name, 1+zeroBasedIndex);
+			var checkBox = this.TryGetInputByNameAndTypeAndIndex(name, "checkbox", zeroBasedIndex);
+			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
 
 		public void CloseBrowser()
@@ -406,7 +412,7 @@ namespace FluentBrowserAutomation
 			{
 				var firstOrDefault = LinksWithText(text).FirstOrDefault();
 				return firstOrDefault == null ? null : firstOrDefault.Element.RemoteWebElement;
-			}), howFound, this);
+			}, Browser), howFound, this);
 			return link;
 		}
 
@@ -447,7 +453,7 @@ namespace FluentBrowserAutomation
 			{
 				var elementById = this.TryGetElementById(id);
 				return elementById == null ? null : elementById.RemoteWebElement;
-			}), "navigation control with id '" + id + "'", this);
+			}, Browser), "navigation control with id '" + id + "'", this);
 		}
 
 		public INavigationControl NavigationControlWithText(string text)
@@ -465,7 +471,7 @@ namespace FluentBrowserAutomation
 					return link.Element.RemoteWebElement;
 				}
 				return null;
-			}), "navigation control with text '" + text + "'", this);
+			}, Browser), "navigation control with text '" + text + "'", this);
 		}
 
 		public IEnumerable<INavigationControl> NavigationControlsWithClassName(string className)
@@ -564,7 +570,7 @@ namespace FluentBrowserAutomation
 		public TextBoxWrapper TextBoxWithFocus()
 		{
 			var active = Browser.SwitchTo().ActiveElement();
-			return new TextBoxWrapper(new RemoteWebElementWrapper(() => null, active), "textbox with focus", this);
+			return new TextBoxWrapper(new RemoteWebElementWrapper(() => null, active, Browser), "textbox with focus", this);
 		}
 
 		public TextBoxWrapper TextBoxWithId(string id)
@@ -753,7 +759,7 @@ namespace FluentBrowserAutomation
 			Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			Func<IEnumerable<IWebElement>> result = () => browserContext.Browser.FindElements(by);
-			var items = result().Select(x => new RemoteWebElementWrapper(null, x));
+			var items = result().Select(x => new RemoteWebElementWrapper(null, x, browserContext.Browser));
 			return isMatch != null ? items.Where(isMatch) : items;
 		}
 
@@ -803,7 +809,7 @@ namespace FluentBrowserAutomation
 				var item = browserContext.GetElements(by, isMatch).FirstOrDefault();
 				return item == null ? null : item.RemoteWebElement;
 			};
-			return new RemoteWebElementWrapper(howToGetIt);
+			return new RemoteWebElementWrapper(howToGetIt, browserContext.Browser);
 		}
 
 		internal static RemoteWebElementWrapper TryGetElementById(this IBrowserContext browserContext, string id,
@@ -847,6 +853,13 @@ namespace FluentBrowserAutomation
 			return
 				browserContext.TryGetElement(
 					By.XPath("//*[@name='" + name + "' and " + dataValue.EscapeForXpath("@data-" + dataId) + "]"));
+		}
+
+		internal static RemoteWebElementWrapper TryGetInputByNameAndTypeAndIndex(this IBrowserContext browserContext,
+			string name, string type, int zeroBasedIndex)
+		{
+			return browserContext.TryGetElement(
+					By.XPath("(//input[@name='" + name + "' and @type='" + type + "'])["+(1+zeroBasedIndex)+"]"));
 		}
 
 		internal static RemoteWebElementWrapper TryGetElementByNameAndTypeAndValue(this IBrowserContext browserContext,

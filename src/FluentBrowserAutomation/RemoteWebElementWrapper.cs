@@ -3,20 +3,22 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 
 namespace FluentBrowserAutomation
 {
 	public class RemoteWebElementWrapper
 	{
-		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt, IWebElement webElement)
-			: this(howToGetIt)
+		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt, IWebElement webElement, IWebDriver browser)
+			: this(howToGetIt, browser)
 		{
 			_remoteElement = webElement;
 		}
 
-		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt)
+		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt, IWebDriver browser)
 		{
 			_howToGetIt = howToGetIt;
+			Browser = browser;
 		}
 
 		private readonly Func<IWebElement> _howToGetIt;
@@ -51,15 +53,24 @@ namespace FluentBrowserAutomation
 				{
 					TryEnsureExists();
 				}
-// ReSharper disable once PossibleNullReferenceException
+
+				// ReSharper disable once PossibleNullReferenceException
 				_remoteElement.Click();
 			}
 			catch (WebDriverException)
 			{
 				_remoteElement = null;
 				TryEnsureExists();
-// ReSharper disable once PossibleNullReferenceException
-				_remoteElement.Click();
+				if (_remoteElement != null)
+				{
+					var actions = new Actions(Browser);
+					actions.Click(_remoteElement).Perform();
+				}
+				else
+				{
+					// ReSharper disable once PossibleNullReferenceException
+					_remoteElement.Click();
+				}
 			}
 		}
 
@@ -385,5 +396,7 @@ namespace FluentBrowserAutomation
 				}
 			}
 		}
+
+		public IWebDriver Browser { get; private set; }
 	}
 }

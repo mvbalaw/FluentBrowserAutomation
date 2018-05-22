@@ -26,7 +26,7 @@ namespace FluentBrowserAutomation.Controls
 		private IEnumerable<RemoteWebElementWrapper> GetOptions(Func<IWebElement, bool> isMatch = null)
 		{
 			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
-			return Element.GetChildElementsByTagName("option", isMatch).Select(x => new RemoteWebElementWrapper(null, x));
+			return Element.GetChildElementsByTagName("option", isMatch).Select(x => new RemoteWebElementWrapper(null, x, BrowserContext.Browser));
 		}
 
 		private IEnumerable<RemoteWebElementWrapper> GetOptionsWithText(string text)

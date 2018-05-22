@@ -31,7 +31,7 @@ namespace FluentBrowserAutomation.Extensions
 				// happens if the parent is the document
 			}
 
-			return new RemoteWebElementWrapper(null, parent);
+			return new RemoteWebElementWrapper(null, parent, e.Browser);
 		}
 
 		internal static bool IsButton(this RemoteWebElementWrapper webElement)
