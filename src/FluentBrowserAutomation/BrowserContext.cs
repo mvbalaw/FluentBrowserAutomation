@@ -119,14 +119,14 @@ namespace FluentBrowserAutomation
 
 		public ButtonWrapper ButtonWithId(string id)
 		{
-			var howFound = String.Format("button with id '{0}'", id);
+			var howFound = string.Format("button with id '{0}'", id);
 			var button = this.TryGetElementById(id, RemoteWebElementWrapperExtensions.IsButton);
 			return new ButtonWrapper(button, howFound, this);
 		}
 
 		public ButtonWrapper ButtonWithText(string text)
 		{
-			var howFound = String.Format("button with visible text '{0}'", text);
+			var howFound = string.Format("button with visible text '{0}'", text);
 			var button = new ButtonWrapper(new RemoteWebElementWrapper(() =>
 			{
 				var btn = this.TryGetElement(By.XPath("//input[(@type='submit' or @type='button') and " + text.EscapeForXpath("@value")
@@ -149,40 +149,40 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<ButtonWrapper> ButtonsWithClassName(string className)
 		{
-			var howFound = String.Format("button with class '{0}'", className);
+			var howFound = string.Format("button with class '{0}'", className);
 			return this.GetElementsByClassName(className, RemoteWebElementWrapperExtensions.IsButton)
 				.Select(x => new ButtonWrapper(x, howFound, this));
 		}
 
 		public CheckBoxWrapper CheckBoxWithId(string id)
 		{
-			var howFound = String.Format("checkbox with id '{0}'", id);
+			var howFound = string.Format("checkbox with id '{0}'", id);
 			var checkBox = this.TryGetElementByIdAndType(id, "checkbox");
 			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
 
 		public CheckBoxWrapper CheckBoxWithIdAndValue(string id, string value)
 		{
-			var howFound = String.Format("checkbox with id '{0}'", id);
+			var howFound = string.Format("checkbox with id '{0}'", id);
 			var checkBox = this.TryGetElementByIdAndTypeAndValue(id, "checkbox", value);
 			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
 
 		public CheckBoxWrapper CheckBoxWithLabel(string label)
 		{
-			return InputWithLabel(label).AsCheckBox(String.Format("checkbox with label '{0}'", label));
+			return InputWithLabel(label).AsCheckBox(string.Format("checkbox with label '{0}'", label));
 		}
 
 		public CheckBoxWrapper CheckBoxWithNameAndDataAttribute(string name, string dataId, string dataValue)
 		{
-			var howFound = String.Format("checkbox with name '{0}'", name);
+			var howFound = string.Format("checkbox with name '{0}'", name);
 			var checkBox = this.TryGetElementByNameAndData(name, dataId, dataValue);
 			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
 
 		public CheckBoxWrapper CheckBoxWithNameAndValue(string name, string value)
 		{
-			var howFound = String.Format("checkbox with name '{0}'", name);
+			var howFound = string.Format("checkbox with name '{0}'", name);
 			var checkBox = this.TryGetElementByNameAndTypeAndValue(name, "checkbox", value);
 			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
@@ -202,7 +202,7 @@ namespace FluentBrowserAutomation
 
 		public CheckBoxWrapper CheckBoxWithNameAndIndex(string name, int zeroBasedIndex)
 		{
-			var howFound = String.Format("checkbox with name '{0}' and index '{1}'", name, 1+zeroBasedIndex);
+			var howFound = string.Format("checkbox with name '{0}' and index '{1}'", name, 1+zeroBasedIndex);
 			var checkBox = this.TryGetInputByNameAndTypeAndIndex(name, "checkbox", zeroBasedIndex);
 			return new CheckBoxWrapper(checkBox, howFound, this);
 		}
@@ -215,7 +215,7 @@ namespace FluentBrowserAutomation
 
 		public ContainerWrapper ContainerWithId(string id)
 		{
-			var howFound = String.Format("container with id '{0}'", id);
+			var howFound = string.Format("container with id '{0}'", id);
 			var container = this.TryGetElementByIdAndTagName(id, "div", "span", "ul", "ol", "table");
 			return new ContainerWrapper(container, howFound, this);
 		}
@@ -227,7 +227,7 @@ namespace FluentBrowserAutomation
 
 		public DivWrapper DivWithId(string id)
 		{
-			var howFound = String.Format("div with id '{0}'", id);
+			var howFound = string.Format("div with id '{0}'", id);
 			var div = this.TryGetElementByIdAndTagName(id, "div");
 			return new DivWrapper(div, howFound, this);
 		}
@@ -241,21 +241,21 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<DivWrapper> DivsWithClassName(string className)
 		{
-			var howFound = String.Format("div with class '{0}'", className);
+			var howFound = string.Format("div with class '{0}'", className);
 			return this.GetElementsByClassNameAndTagName(className, "div")
 				.Select(x => new DivWrapper(x, howFound, this));
 		}
 
 		public DropDownListWrapper DropDownListWithId(string idOfList)
 		{
-			var howFound = String.Format("drop down list with id '{0}'", idOfList);
+			var howFound = string.Format("drop down list with id '{0}'", idOfList);
 			var dropDownList = this.TryGetElementByIdAndTagName(idOfList, "select");
 			return new DropDownListWrapper(dropDownList, howFound, this);
 		}
 
 		public DropDownListWrapper DropDownListWithLabel(string label)
 		{
-			return InputWithLabel(label).AsDropDownList(String.Format("drop down list with label '{0}'", label));
+			return InputWithLabel(label).AsDropDownList(string.Format("drop down list with label '{0}'", label));
 		}
 
 		public IEnumerable<DropDownListWrapper> DropDownLists()
@@ -310,7 +310,7 @@ namespace FluentBrowserAutomation
 
 		public TextBoxWrapper HiddenWithId(string id)
 		{
-			var howFound = String.Format("hidden input with id '{0}'", id);
+			var howFound = string.Format("hidden input with id '{0}'", id);
 			var hidden = this.TryGetElementByIdAndType(id, "hidden");
 			return new TextBoxWrapper(hidden, howFound, this);
 		}
@@ -338,7 +338,7 @@ namespace FluentBrowserAutomation
 
 		public ImageWrapper ImageWithId(string id)
 		{
-			var howFound = String.Format("image with id '{0}'", id);
+			var howFound = string.Format("image with id '{0}'", id);
 			var button = this.TryGetElementByIdAndTagName(id, "img");
 			return new ImageWrapper(button, howFound, this);
 		}
@@ -369,14 +369,14 @@ namespace FluentBrowserAutomation
 
 		public LabelWrapper LabelWithId(string id)
 		{
-			var howFound = String.Format("label with id '{0}'", id);
+			var howFound = string.Format("label with id '{0}'", id);
 			var label = this.TryGetElementByIdAndTagName(id, "label");
 			return new LabelWrapper(label, howFound, this);
 		}
 
 		public LabelWrapper LabelWithText(string text)
 		{
-			var howFound = String.Format("label with text '{0}'", text);
+			var howFound = string.Format("label with text '{0}'", text);
 			var xPath = By.XPath("//label[" + text.EscapeForXpath("normalize-space(.)") + "]");
 			var label = this.TryGetElement(xPath);
 
@@ -392,7 +392,7 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<LabelWrapper> LabelsWithText(string text)
 		{
-			var howFound = String.Format("label with text '{0}'", text);
+			var howFound = string.Format("label with text '{0}'", text);
 			var xPath = By.XPath("//label[" + text.EscapeForXpath("normalize-space(.)") + "]");
 			var labels = this.GetElements(xPath);
 			return labels.Select(x => new LabelWrapper(x, howFound, this));
@@ -400,14 +400,14 @@ namespace FluentBrowserAutomation
 
 		public LinkWrapper LinkWithId(string id)
 		{
-			var howFound = String.Format("link with id '{0}'", id);
+			var howFound = string.Format("link with id '{0}'", id);
 			var link = this.TryGetElementByIdAndTagName(id, "a");
 			return new LinkWrapper(link, howFound, this);
 		}
 
 		public LinkWrapper LinkWithText(string text)
 		{
-			var howFound = String.Format("link with visible text '{0}'", text);
+			var howFound = string.Format("link with visible text '{0}'", text);
 			var link = new LinkWrapper(new RemoteWebElementWrapper(() =>
 			{
 				var firstOrDefault = LinksWithText(text).FirstOrDefault();
@@ -425,7 +425,7 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<LinkWrapper> LinksWithClassName(string className)
 		{
-			var howFound = String.Format("link with class '{0}'", className);
+			var howFound = string.Format("link with class '{0}'", className);
 			return this.GetElementsByClassNameAndTagName(className, "a")
 				.Select(x => new LinkWrapper(x, howFound, this));
 		}
@@ -433,7 +433,7 @@ namespace FluentBrowserAutomation
 		public IEnumerable<LinkWrapper> LinksWithText(string text)
 		{
 			var htmlEscapedText = HttpUtility.HtmlEncode(text);
-			var howFound = String.Format("link with visible text '{0}'", text);
+			var howFound = string.Format("link with visible text '{0}'", text);
 			var items = this.GetElements(By.LinkText(text))
 				.Concat(this.GetElements(By.XPath("//a["+text.EscapeForXpath("text()")+"]|//a["+htmlEscapedText.EscapeForXpath("text()")+"]")))
 				.Select(link => new LinkWrapper(link, howFound, this));
@@ -442,7 +442,7 @@ namespace FluentBrowserAutomation
 
 		public ListWrapper ListWithId(string id)
 		{
-			var howFound = String.Format("list with id '{0}'", id);
+			var howFound = string.Format("list with id '{0}'", id);
 			var list = this.TryGetElementByIdAndTagName(id, "ul");
 			return new ListWrapper(list, howFound, this);
 		}
@@ -476,7 +476,7 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<INavigationControl> NavigationControlsWithClassName(string className)
 		{
-			var howFound = String.Format("navigation control with class '{0}'", className);
+			var howFound = string.Format("navigation control with class '{0}'", className);
 			var buttonsAndLinks = this.GetElementsByClassName(className)
 				.Where(x => x.IsButton() || x.IsLink())
 				.Select(x => new GenericNavigationControl(x, howFound, this))
@@ -491,7 +491,7 @@ namespace FluentBrowserAutomation
 
 		public RadioOptionWrapper RadioOptionWithId(string idOfOption)
 		{
-			var howFound = String.Format("radio option with id '{0}'", idOfOption);
+			var howFound = string.Format("radio option with id '{0}'", idOfOption);
 			var radioButton = this.TryGetElementByIdAndType(idOfOption, "radio");
 			return new RadioOptionWrapper(radioButton, howFound, this);
 		}
@@ -503,7 +503,7 @@ namespace FluentBrowserAutomation
 
 		public RadioOptionWrapper RadioOptionWithNameAndValue(string name, string value)
 		{
-			var howFound = String.Format("radio option with name '{0}'", name);
+			var howFound = string.Format("radio option with name '{0}'", name);
 			var checkBox = this.TryGetElementByNameAndTypeAndValue(name, "radio", value);
 			return new RadioOptionWrapper(checkBox, howFound, this);
 		}
@@ -517,7 +517,7 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<RadioOptionWrapper> RadioOptionsWithName(string name)
 		{
-			var howFound = String.Format("type 'radio' with name '{0}'", name);
+			var howFound = string.Format("type 'radio' with name '{0}'", name);
 			var checkBoxes = this.GetInputsByTypeAndName("radio", name);
 			return checkBoxes.Select(x => new RadioOptionWrapper(x, howFound, this));
 		}
@@ -529,7 +529,7 @@ namespace FluentBrowserAutomation
 
 		public SpanWrapper SpanWithId(string id)
 		{
-			var howFound = String.Format("span with id '{0}'", id);
+			var howFound = string.Format("span with id '{0}'", id);
 			var span = this.TryGetElementByIdAndTagName(id, "span");
 			return new SpanWrapper(span, howFound, this);
 		}
@@ -548,14 +548,14 @@ namespace FluentBrowserAutomation
 
 		public IEnumerable<SpanWrapper> SpansWithClassName(string className)
 		{
-			var howFound = String.Format("span with class '{0}'", className);
+			var howFound = string.Format("span with class '{0}'", className);
 			return this.GetElementsByClassNameAndTagName(className, "span")
 				.Select(x => new SpanWrapper(x, howFound, this));
 		}
 
 		public TableWrapper TableWithId(string id)
 		{
-			var howFound = String.Format("table with id '{0}'", id);
+			var howFound = string.Format("table with id '{0}'", id);
 			var table = this.TryGetElementByIdAndTagName(id, "table");
 			return new TableWrapper(table, howFound, this);
 		}
@@ -575,7 +575,7 @@ namespace FluentBrowserAutomation
 
 		public TextBoxWrapper TextBoxWithId(string id)
 		{
-			var howFound = String.Format("text box with id '{0}'", id);
+			var howFound = string.Format("text box with id '{0}'", id);
 			var textField =
 				this.TryGetElement(By.XPath("//textarea[@id='" + id + "']|//input[@id='" + id + "' and @type='text']|//input[@id='" + id + "' and @type='number']"));
 			return new TextBoxWrapper(textField, howFound, this);
@@ -821,7 +821,7 @@ namespace FluentBrowserAutomation
 		internal static RemoteWebElementWrapper TryGetElementByIdAndTagName(this IBrowserContext browserContext,
 			string id, params string[] tagNames)
 		{
-			var query = String.Join("|", tagNames.Select(tagName => "//" + tagName + "[@id='" + id + "']"));
+			var query = string.Join("|", tagNames.Select(tagName => "//" + tagName + "[@id='" + id + "']"));
 			var xPath = By.XPath(query);
 			return browserContext.TryGetElement(xPath);
 		}
@@ -829,7 +829,7 @@ namespace FluentBrowserAutomation
 		internal static RemoteWebElementWrapper TryGetElementByIdAndType(this IBrowserContext browserContext, string id,
 			params string[] types)
 		{
-			var typeQuery = String.Join(" or ", types.Select(x => "@type = '" + x + "'"));
+			var typeQuery = string.Join(" or ", types.Select(x => "@type = '" + x + "'"));
 			return browserContext.TryGetElement(By.XPath("//*[@id='" + id + "' and (" + typeQuery + ")]"));
 		}
 

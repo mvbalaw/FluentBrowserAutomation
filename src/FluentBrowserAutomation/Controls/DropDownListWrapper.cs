@@ -114,7 +114,7 @@ namespace FluentBrowserAutomation.Controls
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
 			BrowserContext.WaitUntil(x => this.IsEnabled().IsTrue, errorMessage:"wait for " + HowFound + " to be enabled");
 
-			var howFound = String.Format("option with text '{0}'", text);
+			var howFound = string.Format("option with text '{0}'", text);
 			var option = GetOptionsWithText(text).FirstOrDefault();
 			return new OptionWrapper(option, howFound, this, BrowserContext);
 		}
@@ -124,7 +124,7 @@ namespace FluentBrowserAutomation.Controls
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
 			BrowserContext.WaitUntil(x => this.IsEnabled().IsTrue, errorMessage:"wait for " + HowFound + " to be enabled");
 
-			var howFound = String.Format("option with value '{0}'", text);
+			var howFound = string.Format("option with value '{0}'", text);
 			var option = GetOptionsWithValue(text).FirstOrDefault();
 			return new OptionWrapper(option, howFound, this, BrowserContext);
 		}
@@ -167,7 +167,7 @@ namespace FluentBrowserAutomation.Controls
 				}
 				catch (NoSuchElementException)
 				{
-					throw new AssertionException(String.Format("{0} does not have option '{1}'", HowFound, text));
+					throw new AssertionException(string.Format("{0} does not have option '{1}'", HowFound, text));
 				}
 			}
 		}
@@ -176,11 +176,11 @@ namespace FluentBrowserAutomation.Controls
 		{
 			BrowserContext.WaitUntil(x => this.IsVisible().IsTrue, errorMessage:"wait for " + HowFound + " to be visible");
 			RemoteWebElementWrapper option = null;
-			var partialXpath = String.Join(" and ", unwantedValues.Select(y => "not(" + y.EscapeForXpath("text()") + ")"));
+			var partialXpath = string.Join(" and ", unwantedValues.Select(y => "not(" + y.EscapeForXpath("text()") + ")"));
 			var ddlId = Element.GetAttribute("id");
 			var selector = By.XPath("//select[" + ddlId.EscapeForXpath("@id") + "]/option[" + partialXpath + "]");
 			this.WaitUntil(x => (option = BrowserContext.TryGetElement(selector)) != null,
-				errorMessage:"wait for " + HowFound + " to have option other than: " + String.Join(" or ", unwantedValues));
+				errorMessage:"wait for " + HowFound + " to have option other than: " + string.Join(" or ", unwantedValues));
 
 			Select(option.Text);
 		}
@@ -211,7 +211,7 @@ namespace FluentBrowserAutomation.Controls
 			if (!textIsSelected)
 			{
 				var selectedTexts = GetSelectedTexts().ToArray();
-				selectedTexts.Contains(text).ShouldBeTrue("Selected value of " + HowFound + " should be '" + text + "' but is/are '" + String.Join(", ", selectedTexts) + "'");
+				selectedTexts.Contains(text).ShouldBeTrue("Selected value of " + HowFound + " should be '" + text + "' but is/are '" + string.Join(", ", selectedTexts) + "'");
 			}
 		}
 

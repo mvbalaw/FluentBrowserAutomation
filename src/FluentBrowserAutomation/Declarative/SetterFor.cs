@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 
 using FluentAssert;
@@ -18,14 +17,14 @@ namespace FluentBrowserAutomation.Declarative
 		public static IAmGenericInputThatCanBeChanged InputWithClassName(this IBrowserContext browserContext, string className)
 		{
 			var control = browserContext.GetElementsByClassName(className).FirstOrDefault();
-			var howFound = String.Format("Input with class '{0}'", className);
+			var howFound = string.Format("Input with class '{0}'", className);
 			return GetInputElement(browserContext, control, howFound);
 		}
 
 		public static IAmGenericInputThatCanBeChanged InputWithId(this IBrowserContext browserContext, string id)
 		{
 			var control = browserContext.TryGetElementById(id);
-			var howFound = String.Format("Input with id '{0}'", id);
+			var howFound = string.Format("Input with id '{0}'", id);
 			return GetInputElement(browserContext, control, howFound);
 		}
 
@@ -33,13 +32,13 @@ namespace FluentBrowserAutomation.Declarative
 		{
 			LabelWrapper label = null;
 			var trimmedLabelText = labelText.Trim();
-			browserContext.WaitUntil(x => (label = x.LabelsWithText(trimmedLabelText).FirstOrDefault(y=>y.Element.RemoteWebElement.Displayed)) != null, () => "wait for label with text '" + trimmedLabelText + "' to exist, found: " + String.Join(", ", browserContext.Labels().Select(x => x.Text().Text).ToArray()));
-			label.ShouldNotBeNull(String.Format("Could not find Label with text '{0}'", trimmedLabelText));
+			browserContext.WaitUntil(x => (label = x.LabelsWithText(trimmedLabelText).FirstOrDefault(y=>y.Element.RemoteWebElement.Displayed)) != null, () => "wait for label with text '" + trimmedLabelText + "' to exist, found: " + string.Join(", ", browserContext.Labels().Select(x => x.Text().Text).ToArray()));
+			label.ShouldNotBeNull(string.Format("Could not find Label with text '{0}'", trimmedLabelText));
 
 //// ReSharper disable PossibleNullReferenceException
 			var itsLinkedControlId = label.For;
 //// ReSharper restore PossibleNullReferenceException
-			itsLinkedControlId.ShouldNotBeNullOrEmpty(String.Format("Label with text '{0}' does not have a For attribute", labelText));
+			itsLinkedControlId.ShouldNotBeNullOrEmpty(string.Format("Label with text '{0}' does not have a For attribute", labelText));
 			var control = browserContext.TryGetElementById(itsLinkedControlId);
 			var howFound = "Input with id '" + itsLinkedControlId + "' as referenced in For attribute of Label with text '" + labelText + "'";
 

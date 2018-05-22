@@ -109,8 +109,8 @@ namespace FluentBrowserAutomation
 		{
 			const string unexpectedlyFalse = "{0} does not exist but should.";
 			const string unexpectedlyTrue = "{0} exists but should not.";
-			var unexpectedlyTrueMessage = String.Format(unexpectedlyTrue, element.HowFound);
-			var unexpectedlyFalseMessage = String.Format(unexpectedlyFalse, element.HowFound);
+			var unexpectedlyTrueMessage = string.Format(unexpectedlyTrue, element.HowFound);
+			var unexpectedlyFalseMessage = string.Format(unexpectedlyFalse, element.HowFound);
 			var result = new BooleanState(
 				unexpectedlyFalseMessage,
 				unexpectedlyTrueMessage,
@@ -194,8 +194,8 @@ namespace FluentBrowserAutomation
 			{
 				parent = "it";
 			}
-			var unexpectedlyTrueMessage = String.Format(unexpectedlyTrue, element.HowFound);
-			var unexpectedlyFalseMessage = String.Format(unexpectedlyFalse, element.HowFound, parent);
+			var unexpectedlyTrueMessage = string.Format(unexpectedlyTrue, element.HowFound);
+			var unexpectedlyFalseMessage = string.Format(unexpectedlyFalse, element.HowFound, parent);
 
 			var result = new BooleanState(unexpectedlyFalseMessage,
 				unexpectedlyTrueMessage,

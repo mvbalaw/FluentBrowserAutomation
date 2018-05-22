@@ -70,7 +70,7 @@ namespace FluentBrowserAutomation.Framework
 				{
 					if (windowHandle != null)
 					{
-						var process = Process.GetProcesses().FirstOrDefault(x => x.MainWindowHandle == new IntPtr(Int32.Parse(windowHandle)));
+						var process = Process.GetProcesses().FirstOrDefault(x => x.MainWindowHandle == new IntPtr(int.Parse(windowHandle)));
 						if (process != null)
 						{
 							process.Kill();

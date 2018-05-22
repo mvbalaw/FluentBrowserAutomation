@@ -1,5 +1,3 @@
-using System;
-
 using FluentBrowserAutomation.Accessors;
 
 //// ReSharper disable CheckNamespace
@@ -18,8 +16,8 @@ namespace FluentBrowserAutomation
 		{
 			const string unexpectedlyFalse = "{0} is not enabled but should be.";
 			const string unexpectedlyTrue = "{0} is enabled but should not be.";
-			var unexpectedlyTrueMessage = String.Format(unexpectedlyTrue, element.HowFound);
-			var unexpectedlyFalseMessage = String.Format(unexpectedlyFalse, element.HowFound);
+			var unexpectedlyTrueMessage = string.Format(unexpectedlyTrue, element.HowFound);
+			var unexpectedlyFalseMessage = string.Format(unexpectedlyFalse, element.HowFound);
 			var result = new BooleanState(unexpectedlyFalseMessage,
 				unexpectedlyTrueMessage,
 				() => element.Element.Enabled);

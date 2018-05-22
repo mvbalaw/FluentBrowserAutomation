@@ -22,8 +22,8 @@ namespace FluentBrowserAutomation.Accessors
 		{
 			const string unexpectedlyTrue = "The text '{0}' in {1} should not contain '{2}'";
 			const string unexpectedlyFalse = "The text '{0}' in {1} should contain '{2}'";
-			var unexpectedlyFalseMessage = String.Format(unexpectedlyFalse, Text, _howFound, containedText);
-			var unexpectedlyTrueMessage = String.Format(unexpectedlyTrue, Text, _howFound, containedText);
+			var unexpectedlyFalseMessage = string.Format(unexpectedlyFalse, Text, _howFound, containedText);
+			var unexpectedlyTrueMessage = string.Format(unexpectedlyTrue, Text, _howFound, containedText);
 			var result = new BooleanState(unexpectedlyFalseMessage,
 				unexpectedlyTrueMessage,
 				() => Text != null && Text.Contains(containedText));
@@ -45,7 +45,7 @@ namespace FluentBrowserAutomation.Accessors
 		public void ShouldBeEqualTo([NotNull] string text)
 		{
 			const string unexpectedlyNotEqual = "The text '{0}' in {1} should be '{2}'";
-			ShouldBeEqualTo(text, String.Format(unexpectedlyNotEqual, Text, _howFound, text));
+			ShouldBeEqualTo(text, string.Format(unexpectedlyNotEqual, Text, _howFound, text));
 		}
 
 		public void ShouldBeEqualTo([NotNull] string text, string errorMessage)
@@ -77,7 +77,7 @@ namespace FluentBrowserAutomation.Accessors
 		public void ShouldNotBeEqualTo([NotNull] string text)
 		{
 			const string unexpectedlyEqual = "The text '{0}' in {1} should not be '{2}'";
-			ShouldNotBeEqualTo(text, String.Format(unexpectedlyEqual, Text, _howFound, text));
+			ShouldNotBeEqualTo(text, string.Format(unexpectedlyEqual, Text, _howFound, text));
 		}
 
 		public void ShouldNotBeEqualTo([NotNull] string text, string errorMessage)
@@ -91,8 +91,8 @@ namespace FluentBrowserAutomation.Accessors
 		{
 			const string unexpectedlyTrue = "The text '{0}' in {1} should not start with '{2}'";
 			const string unexpectedlyFalse = "The text '{0}' in {1} should start with '{2}'";
-			var unexpectedlyTrueMessage = String.Format(unexpectedlyTrue, Text, _howFound, startingText);
-			var unexpectedlyFalseMessage = String.Format(unexpectedlyFalse, Text, _howFound, startingText);
+			var unexpectedlyTrueMessage = string.Format(unexpectedlyTrue, Text, _howFound, startingText);
+			var unexpectedlyFalseMessage = string.Format(unexpectedlyFalse, Text, _howFound, startingText);
 			var result = new BooleanState(unexpectedlyFalseMessage,
 				unexpectedlyTrueMessage,
 				() => Text != null && Text.StartsWith(startingText));

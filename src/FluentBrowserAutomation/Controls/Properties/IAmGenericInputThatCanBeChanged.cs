@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 
 using FluentAssert;
@@ -85,7 +84,7 @@ namespace FluentBrowserAutomation
 			var dropDown = input.AsDropDownList();
 			input.BrowserContext.WaitUntil(x => dropDown.Options.Any(), errorMessage:"wait for " + input.HowFound + " options to be visible");
 			var selectedValues = dropDown.GetSelectedValues().ToArray();
-			selectedValues.Contains(value).ShouldBeTrue("Selected value of " + dropDown.HowFound + " should be '" + value + "' but is/are '" + String.Join(", ", selectedValues) + "'");
+			selectedValues.Contains(value).ShouldBeTrue("Selected value of " + dropDown.HowFound + " should be '" + value + "' but is/are '" + string.Join(", ", selectedValues) + "'");
 			return dropDown;
 		}
 

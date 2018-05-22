@@ -1,5 +1,3 @@
-using System;
-
 namespace FluentBrowserAutomation
 {
 	public class Notification
@@ -10,7 +8,7 @@ namespace FluentBrowserAutomation
 
 		public override string ToString()
 		{
-			return String.Format("{0}: {1}", BrowserType, Message);
+			return string.Format("{0}: {1}", BrowserType, Message);
 		}
 	}
 }

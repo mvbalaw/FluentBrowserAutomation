@@ -34,7 +34,7 @@ namespace FluentBrowserAutomation
 					.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
 					.Where(x => !x.Contains("FluentBrowserAutomation"))
 					.ToArray();
-				var result = String.Join(Environment.NewLine, lines);
+				var result = string.Join(Environment.NewLine, lines);
 				return result;
 			}
 		}

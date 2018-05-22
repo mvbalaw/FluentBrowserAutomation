@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +17,7 @@ namespace FluentBrowserAutomation.Controls
         {
             var items = Element.GetChildElementsByTagName("li")
                 .Select((x, i) =>
-					new ListItemWrapper(new RemoteWebElementWrapper(() => Element.GetChildElementsByTagName("li").ToArray()[i],x, BrowserContext.Browser), String.Format("{0}, item with index {1}", HowFound, i), BrowserContext));
+					new ListItemWrapper(new RemoteWebElementWrapper(() => Element.GetChildElementsByTagName("li").ToArray()[i],x, BrowserContext.Browser), string.Format("{0}, item with index {1}", HowFound, i), BrowserContext));
 
             return items;
         }
@@ -27,7 +26,7 @@ namespace FluentBrowserAutomation.Controls
         {
             var item = BrowserContext.TryGetElementById(listItemId);
 
-            return new ListItemWrapper(item, String.Format("{0}, item with id {1}", HowFound, listItemId), BrowserContext);
+            return new ListItemWrapper(item, string.Format("{0}, item with id {1}", HowFound, listItemId), BrowserContext);
         }
     }
 

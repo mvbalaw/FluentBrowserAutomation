@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,7 +27,7 @@ namespace FluentBrowserAutomation.Controls
             var allRows = GetRows();
             var headers = allRows.Where(IsHeaderRow)
                 .Select((x, i) =>
-                    new TableHeaderRowWrapper(x, String.Format("{0}, header row with index {1}", HowFound, i),
+                    new TableHeaderRowWrapper(x, string.Format("{0}, header row with index {1}", HowFound, i),
                         BrowserContext));
             return headers;
         }
@@ -38,7 +37,7 @@ namespace FluentBrowserAutomation.Controls
             var allRows = GetRows();
             var footers = allRows.Where(IsFooterRow)
                 .Select((x, i) =>
-                    new TableRowWrapper(x, String.Format("{0}, footer row with index {1}", HowFound, i),
+                    new TableRowWrapper(x, string.Format("{0}, footer row with index {1}", HowFound, i),
                         BrowserContext));
             return footers;
         }
@@ -61,7 +60,7 @@ namespace FluentBrowserAutomation.Controls
             var allRows = GetRows();
             var rows = GetBodyRows(allRows)
                 .Select((x, i) =>
-                    new TableRowWrapper(x, String.Format("{0}, row with index {1}", HowFound, i), BrowserContext));
+                    new TableRowWrapper(x, string.Format("{0}, row with index {1}", HowFound, i), BrowserContext));
 
             return rows;
         }
@@ -69,7 +68,7 @@ namespace FluentBrowserAutomation.Controls
         public TableRowWrapper RowWithId(string tableRowId)
         {
             var row = GetRows().FirstOrDefault(x => x.GetAttribute("id") == tableRowId);
-			return new TableRowWrapper(row, String.Format("{0}, row with id {1}", HowFound, tableRowId), BrowserContext);
+			return new TableRowWrapper(row, string.Format("{0}, row with id {1}", HowFound, tableRowId), BrowserContext);
         }
     }
 }
