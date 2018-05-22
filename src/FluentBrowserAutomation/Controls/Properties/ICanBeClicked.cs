@@ -1,5 +1,4 @@
-using System;
-
+using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 
 // ReSharper disable once CheckNamespace
@@ -39,10 +38,10 @@ namespace FluentBrowserAutomation
 				webElement.Click();
 				return true;
 			}
-			catch (InvalidOperationException invalidOperationException)
+			catch (WebDriverException exception)
 			{
 				element.Focus();
-                if (invalidOperationException.Message.Contains("Other element would receive the click") || invalidOperationException.Message.Contains("Element is not clickable at point"))
+                if (exception.Message.Contains("Other element would receive the click") || exception.Message.Contains("Element is not clickable at point"))
 				{
 					// try scrolling down to the element
 					var yLocation = ((RemoteWebElement)webElement.RemoteWebElement).Location.Y + 100;
@@ -54,11 +53,11 @@ namespace FluentBrowserAutomation
 							webElement.Click();
 							return true;
 						}
-						catch (InvalidOperationException invalidOperationException2)
+						catch (WebDriverException webDriverException)
 						{
-                            if (!invalidOperationException2.Message.Contains("Other element would receive the click") && !invalidOperationException.Message.Contains("Element is not clickable at point"))
+                            if (!webDriverException.Message.Contains("Other element would receive the click") && !exception.Message.Contains("Element is not clickable at point"))
 							{
-								throw new AssertionException(invalidOperationException);
+								throw new AssertionException(exception);
 							}
 						}
 					}
