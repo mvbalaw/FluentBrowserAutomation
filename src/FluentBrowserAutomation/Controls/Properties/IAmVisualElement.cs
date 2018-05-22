@@ -37,6 +37,7 @@ namespace FluentBrowserAutomation
 
 			var action = new Actions(element.BrowserContext.Browser);
 			action.MoveToElement(element.Element.RemoteWebElement).Perform();
+			ScrollToIt(element);
 		}
 
 		public static BooleanState HasFocus(this IAmVisualElement input)
@@ -63,19 +64,16 @@ namespace FluentBrowserAutomation
 
 			var webElement = element.Element.RemoteWebElement;
 			ScrollToIt(yOffset, webElement, browser);
-			ScrollToIt(yOffset, webElement, browser);
 		}
 
 		private static void ScrollToIt(int yOffset, IWebElement webElement, IWebDriver browser)
 		{
-			var elementPosition = ((RemoteWebElement) webElement).LocationOnScreenOnceScrolledIntoView;
-			var yPosition = elementPosition.Y + yOffset;
-			if (yPosition < 0)
-			{
-				yPosition = 0;
-			}
-			var js = String.Format("window.scroll({0}, {1})", elementPosition.X, yPosition);
-			((IJavaScriptExecutor) browser).ExecuteScript(js);
+			// from: https://stackoverflow.com/a/38321310/102536
+			const string scrollElementIntoMiddle = "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
+			                                       + "var elementTop = arguments[0].getBoundingClientRect().top;"
+			                                       + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
+
+			((IJavaScriptExecutor) browser).ExecuteScript(scrollElementIntoMiddle, webElement);
 		}
 
 		public static T ShouldBeVisible<T>(this T input, string errorMessage = null) where T : IAmVisualElement

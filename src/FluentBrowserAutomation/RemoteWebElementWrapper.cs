@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 
 using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
 
 namespace FluentBrowserAutomation
 {
@@ -59,18 +58,13 @@ namespace FluentBrowserAutomation
 			}
 			catch (WebDriverException)
 			{
+				var temp = _remoteElement;
 				_remoteElement = null;
 				TryEnsureExists();
-				if (_remoteElement != null)
-				{
-					var actions = new Actions(Browser);
-					actions.Click(_remoteElement).Perform();
-				}
-				else
-				{
-					// ReSharper disable once PossibleNullReferenceException
-					_remoteElement.Click();
-				}
+				if (_remoteElement == null)
+					_remoteElement = temp;
+				// ReSharper disable once PossibleNullReferenceException
+				_remoteElement.Click();
 			}
 		}
 
