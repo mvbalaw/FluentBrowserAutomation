@@ -815,6 +815,8 @@ namespace FluentBrowserAutomation
 		internal static RemoteWebElementWrapper TryGetElementById(this IBrowserContext browserContext, string id,
 			Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
+			var matches = browserContext.GetElements(By.XPath("//*[@id='" + id + "']"), isMatch).ToList();
+			matches.Count.ShouldBeLessThan(2, "found multiple elements with id '" + id + "'");
 			return browserContext.TryGetElement(By.Id(id), isMatch);
 		}
 
