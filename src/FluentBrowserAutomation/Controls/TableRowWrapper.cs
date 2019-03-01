@@ -18,7 +18,7 @@ namespace FluentBrowserAutomation.Controls
 		public string[] CellValues()
 		{
 			var elements = GetCells();
-			return elements.Select((cell, index) => new TableCellWrapper(new RemoteWebElementWrapper(()=>GetCells().ToArray()[index], cell, BrowserContext.Browser), string.Format("{0}, table cell with index {1}", HowFound, index), BrowserContext))
+			return elements.Select((cell, index) => new TableCellWrapper(new RemoteWebElementWrapper(()=>GetCells().ToArray()[index], cell, BrowserContext), string.Format("{0}, table cell with index {1}", HowFound, index), BrowserContext))
 				.Select(x => (string)x.Text())
 				.ToArray();
 		}
@@ -36,7 +36,7 @@ namespace FluentBrowserAutomation.Controls
 					.FirstOrDefault(x => x.Index == zeroBasedIndex);
 			return cell == null ? null : cell.Element;
 			};
-			var tableCellWrapper = new TableCellWrapper(new RemoteWebElementWrapper(f, f(), BrowserContext.Browser), string.Format("{0}, table cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
+			var tableCellWrapper = new TableCellWrapper(new RemoteWebElementWrapper(f, f(), BrowserContext), string.Format("{0}, table cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
 			tableCellWrapper.BrowserContext.WaitUntil(x => tableCellWrapper.Exists().IsTrue, errorMessage: "wait for " + tableCellWrapper.HowFound + " to exist");
 			return tableCellWrapper;
 		}
@@ -62,7 +62,7 @@ namespace FluentBrowserAutomation.Controls
 		public string[] CellValues()
 		{
 			var elements = GetCells();
-			return elements.Select((cell, index) => new TableHeaderCellWrapper(new RemoteWebElementWrapper(()=>GetCells().ToArray()[index],cell, BrowserContext.Browser), string.Format("{0}, table header cell with index {1}", HowFound, index), BrowserContext))
+			return elements.Select((cell, index) => new TableHeaderCellWrapper(new RemoteWebElementWrapper(()=>GetCells().ToArray()[index],cell, BrowserContext), string.Format("{0}, table header cell with index {1}", HowFound, index), BrowserContext))
 				.Select(x => (string)x.Text())
 				.ToArray();
 		}
@@ -80,7 +80,7 @@ namespace FluentBrowserAutomation.Controls
 					.FirstOrDefault(x => x.Index == zeroBasedIndex);
 				return cell == null ? null : cell.Element;
 			};
-			return new TableHeaderCellWrapper(new RemoteWebElementWrapper(f,f(), BrowserContext.Browser), string.Format("{0}, table header cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
+			return new TableHeaderCellWrapper(new RemoteWebElementWrapper(f,f(), BrowserContext), string.Format("{0}, table header cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
 		}
 
 		private IEnumerable<IWebElement> GetCells()

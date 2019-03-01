@@ -13,7 +13,7 @@ namespace FluentBrowserAutomation
 	{
 	}
 
-	public static class IAmGEnericInputThatCanBeChangedExtensions
+	public static class IAmGenericInputThatCanBeChangedExtensions
 	{
 // ReSharper disable once SuggestBaseTypeForParameter
 		public static IAmInputThatCanBeChanged CheckIt(this IAmGenericInputThatCanBeChanged input)

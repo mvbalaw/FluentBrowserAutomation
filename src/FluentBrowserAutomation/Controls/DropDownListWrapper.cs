@@ -26,7 +26,7 @@ namespace FluentBrowserAutomation.Controls
 		private IEnumerable<RemoteWebElementWrapper> GetOptions(Func<IWebElement, bool> isMatch = null)
 		{
 			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
-			return Element.GetChildElementsByTagName("option", isMatch).Select(x => new RemoteWebElementWrapper(null, x, BrowserContext.Browser));
+			return Element.GetChildElementsByTagName("option", isMatch).Select(x => new RemoteWebElementWrapper(null, x, BrowserContext));
 		}
 
 		private IEnumerable<RemoteWebElementWrapper> GetOptionsWithText(string text)
@@ -170,6 +170,7 @@ namespace FluentBrowserAutomation.Controls
 					throw new AssertionException(string.Format("{0} does not have option '{1}'", HowFound, text));
 				}
 			}
+			BrowserContext.WaitForPendingRequests();
 		}
 
 		public void SelectAnyOptionExcept(params string[] unwantedValues)
@@ -194,6 +195,7 @@ namespace FluentBrowserAutomation.Controls
 			if (option != null)
 			{
 				option.Click();
+				dropDown.BrowserContext.WaitForPendingRequests();
 			}
 			if (verifySelected)
 			{

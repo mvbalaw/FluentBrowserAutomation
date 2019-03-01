@@ -19,7 +19,7 @@ namespace FluentBrowserAutomation.Controls
 
         private IEnumerable<RemoteWebElementWrapper> GetRows()
         {
-            return Element.GetChildElementsByTagName("tr").Select(x=>new RemoteWebElementWrapper(null,x, BrowserContext.Browser));
+            return Element.GetChildElementsByTagName("tr").Select(x=>new RemoteWebElementWrapper(null,x, BrowserContext));
         }
 
         public IEnumerable<TableHeaderRowWrapper> Headers()

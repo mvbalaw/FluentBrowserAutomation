@@ -16,13 +16,13 @@ namespace FluentBrowserAutomation
 		{
 			element.BrowserContext.WaitUntil(x => element.IsVisible().IsTrue, errorMessage:"wait for " + element.HowFound + " to be visible");
 
-			var disableable = element as ICouldBeDisabled;
-			if (disableable != null)
+			var couldBeDisabled = element as ICouldBeDisabled;
+			if (couldBeDisabled != null)
 			{
-				element.BrowserContext.WaitUntil(x => disableable.IsEnabled().IsTrue, errorMessage:"wait for " + element.HowFound + " to be enabled");
+				element.BrowserContext.WaitUntil(x => couldBeDisabled.IsEnabled().IsTrue, errorMessage:"wait for " + element.HowFound + " to be enabled");
 			}
-			var needsFoscus = element as INeedFocus;
-			if (needsFoscus != null)
+			var needsFocus = element as INeedFocus;
+			if (needsFocus != null)
 			{
 				element.Focus();
 			}
@@ -36,6 +36,7 @@ namespace FluentBrowserAutomation
 			try
 			{
 				webElement.Click();
+				element.BrowserContext.WaitForPendingRequests();
 				return true;
 			}
 			catch (WebDriverException exception)
@@ -51,6 +52,7 @@ namespace FluentBrowserAutomation
 						{
 							element.ScrollToIt(yOffset);
 							webElement.Click();
+							element.BrowserContext.WaitForPendingRequests();
 							return true;
 						}
 						catch (WebDriverException webDriverException)

@@ -17,7 +17,7 @@ namespace FluentBrowserAutomation.Controls
         {
             var items = Element.GetChildElementsByTagName("li")
                 .Select((x, i) =>
-					new ListItemWrapper(new RemoteWebElementWrapper(() => Element.GetChildElementsByTagName("li").ToArray()[i],x, BrowserContext.Browser), string.Format("{0}, item with index {1}", HowFound, i), BrowserContext));
+					new ListItemWrapper(new RemoteWebElementWrapper(() => Element.GetChildElementsByTagName("li").ToArray()[i],x, BrowserContext), string.Format("{0}, item with index {1}", HowFound, i), BrowserContext));
 
             return items;
         }

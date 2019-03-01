@@ -23,9 +23,10 @@ namespace FluentBrowserAutomation
 	{
 		public static TextBoxWrapper AsTextBox(this IAmVisualElement element, string howFound = null)
 		{
-			if (element is TextBoxWrapper)
+			var box = element as TextBoxWrapper;
+			if (box != null)
 			{
-				return element as TextBoxWrapper;
+				return box;
 			}
 			var elem = element.Element.IsTextBox() ? element.Element : null;
 			return new TextBoxWrapper(elem, howFound ?? element.HowFound, element.BrowserContext);

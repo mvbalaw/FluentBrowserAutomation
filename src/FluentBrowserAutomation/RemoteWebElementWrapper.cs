@@ -1,17 +1,18 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
-
+using JetBrains.Annotations;
 using OpenQA.Selenium;
 
 namespace FluentBrowserAutomation
 {
 	public class RemoteWebElementWrapper
 	{
-		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt, IWebElement webElement, IWebDriver browser)
-			: this(howToGetIt, browser)
+		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt, IWebElement webElement, IBrowserContext browserContext)
+			: this(howToGetIt, browserContext.Browser)
 		{
 			_remoteElement = webElement;
+			_browserContext = browserContext;
 		}
 
 		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt, IWebDriver browser)
@@ -22,7 +23,14 @@ namespace FluentBrowserAutomation
 
 		private readonly Func<IWebElement> _howToGetIt;
 		private IWebElement _remoteElement;
+		[CanBeNull] private readonly IBrowserContext _browserContext;
 		private string _tagName;
+
+		public RemoteWebElementWrapper(Func<IWebElement> howToGetIt, IWebElement webElement, IWebDriver browser)
+			: this(howToGetIt, browser)
+		{
+			_remoteElement = webElement;
+		}
 
 		public void Clear()
 		{
@@ -55,6 +63,10 @@ namespace FluentBrowserAutomation
 
 				// ReSharper disable once PossibleNullReferenceException
 				_remoteElement.Click();
+				if (_browserContext != null)
+				{
+					_browserContext.WaitForPendingRequests();
+				}
 			}
 			catch (WebDriverException)
 			{
@@ -65,6 +77,10 @@ namespace FluentBrowserAutomation
 					_remoteElement = temp;
 				// ReSharper disable once PossibleNullReferenceException
 				_remoteElement.Click();
+				if (_browserContext != null)
+				{
+					_browserContext.WaitForPendingRequests();
+				}
 			}
 		}
 

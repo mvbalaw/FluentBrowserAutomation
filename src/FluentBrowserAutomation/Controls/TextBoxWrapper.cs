@@ -42,6 +42,7 @@ namespace FluentBrowserAutomation.Controls
 			this.ScrollToIt();
 			Element.Clear();
 			Element.SendKeys(text);
+			BrowserContext.WaitForPendingRequests();
 			return this;
 		}
 

@@ -9,9 +9,10 @@ namespace FluentBrowserAutomation
 	{
 		public static ButtonWrapper AsButton(this INavigationControl navigationControl)
 		{
-			if (navigationControl is ButtonWrapper)
+			var button = navigationControl as ButtonWrapper;
+			if (button != null)
 			{
-				return navigationControl as ButtonWrapper;
+				return button;
 			}
 			var elem = navigationControl.Element.IsButton() ? navigationControl.Element : null;
 			return new ButtonWrapper(elem, navigationControl.HowFound, navigationControl.BrowserContext);
@@ -19,9 +20,10 @@ namespace FluentBrowserAutomation
 
 		public static LinkWrapper AsLink(this INavigationControl navigationControl)
 		{
-			if (navigationControl is LinkWrapper)
+			var link = navigationControl as LinkWrapper;
+			if (link != null)
 			{
-				return navigationControl as LinkWrapper;
+				return link;
 			}
 			var elem = navigationControl.Element.IsLink() ? navigationControl.Element : null;
 			return new LinkWrapper(elem, navigationControl.HowFound, navigationControl.BrowserContext);

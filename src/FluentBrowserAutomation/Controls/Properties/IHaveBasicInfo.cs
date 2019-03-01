@@ -25,9 +25,10 @@ namespace FluentBrowserAutomation
 	{
 		public static CheckBoxWrapper AsCheckBox(this IHaveBasicInfo element, string howFound = null)
 		{
-			if (element is CheckBoxWrapper)
+			var box = element as CheckBoxWrapper;
+			if (box != null)
 			{
-				return element as CheckBoxWrapper;
+				return box;
 			}
 			var elem = element.Element.IsCheckBox() ? element.Element : null;
 			return new CheckBoxWrapper(elem, howFound ?? element.HowFound, element.BrowserContext);
@@ -35,9 +36,10 @@ namespace FluentBrowserAutomation
 
 		public static DropDownListWrapper AsDropDownList(this IHaveBasicInfo element, string howFound = null)
 		{
-			if (element is DropDownListWrapper)
+			var list = element as DropDownListWrapper;
+			if (list != null)
 			{
-				return element as DropDownListWrapper;
+				return list;
 			}
 			var elem = element.Element.IsDropDownList() ? element.Element : null;
 			return new DropDownListWrapper(elem, howFound ?? element.HowFound, element.BrowserContext);
@@ -45,9 +47,10 @@ namespace FluentBrowserAutomation
 
 		public static FileUploadWrapper AsFileUpload(this IHaveBasicInfo element)
 		{
-			if (element is FileUploadWrapper)
+			var upload = element as FileUploadWrapper;
+			if (upload != null)
 			{
-				return element as FileUploadWrapper;
+				return upload;
 			}
 			var elem = element.Element.IsFileUpload() ? element.Element : null;
 			return new FileUploadWrapper(elem, element.HowFound, element.BrowserContext);
@@ -55,9 +58,10 @@ namespace FluentBrowserAutomation
 
 		public static RadioOptionWrapper AsRadioOption(this IHaveBasicInfo element, string howFound = null)
 		{
-			if (element is RadioOptionWrapper)
+			var option = element as RadioOptionWrapper;
+			if (option != null)
 			{
-				return element as RadioOptionWrapper;
+				return option;
 			}
 			var elem = element.Element.IsRadioOption() ? element.Element : null;
 			return new RadioOptionWrapper(elem, howFound ?? element.HowFound, element.BrowserContext);
@@ -65,9 +69,10 @@ namespace FluentBrowserAutomation
 
 		public static TextBoxWrapper AsTextBox(this IHaveBasicInfo element)
 		{
-			if (element is TextBoxWrapper)
+			var box = element as TextBoxWrapper;
+			if (box != null)
 			{
-				return element as TextBoxWrapper;
+				return box;
 			}
 			var elem = element.Element.IsTextBox() ? element.Element : null;
 			return new TextBoxWrapper(elem, element.HowFound, element.BrowserContext);

@@ -17,7 +17,7 @@ namespace FluentBrowserAutomation.Controls
 		public IEnumerable<LinkWrapper> Links()
 		{
 			return Element.GetChildElementsByTagName("a")
-				.Select((x, i) => new LinkWrapper(new RemoteWebElementWrapper(() => Element.GetChildElementsByTagName("a").ToArray()[i],x, BrowserContext.Browser), HowFound + " .links", BrowserContext));
+				.Select((x, i) => new LinkWrapper(new RemoteWebElementWrapper(() => Element.GetChildElementsByTagName("a").ToArray()[i],x, BrowserContext), HowFound + " .links", BrowserContext));
 		}
 
 		public IBrowserContext BrowserContext { get; private set; }

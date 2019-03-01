@@ -759,7 +759,7 @@ namespace FluentBrowserAutomation
 			Func<RemoteWebElementWrapper, bool> isMatch = null)
 		{
 			Func<IEnumerable<IWebElement>> result = () => browserContext.Browser.FindElements(by);
-			var items = result().Select(x => new RemoteWebElementWrapper(null, x, browserContext.Browser));
+			var items = result().Select(x => new RemoteWebElementWrapper(null, x, browserContext));
 			return isMatch != null ? items.Where(isMatch) : items;
 		}
 
