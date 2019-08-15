@@ -1,5 +1,4 @@
 ﻿using System;
-
 using OpenQA.Selenium;
 
 // ReSharper disable once CheckNamespace
@@ -15,13 +14,20 @@ namespace FluentBrowserAutomation
     {
         public static T UiState<T>(this T pageWrapper, params Action<IBrowserContext>[] funcs) where T : IPageWrapper
         {
-            return UiState(pageWrapper, null, funcs);
+			pageWrapper.BrowserContext.Trace("-- Performing: unlabeled action");
+
+	        return UiState(pageWrapper, null, funcs);
         }
 
         public static T UiState<T>(this T pageWrapper, string activityDescription = null,
             params Action<IBrowserContext>[] funcs) where T : IPageWrapper
         {
-            for (int index = 0; index < funcs.Length; index++)
+	        if (activityDescription != null)
+	        {
+		        pageWrapper.BrowserContext.Trace("-- Performing: " + activityDescription);
+	        }
+
+	        for (var index = 0; index < funcs.Length; index++)
             {
                 var func = funcs[index];
                 var func1 = func;
@@ -31,8 +37,7 @@ namespace FluentBrowserAutomation
                     return true;
                 },
                     errorMessage:
-                        "UiState action " + (index + 1) + " of " + (activityDescription ?? funcs.Length.ToString()) +
-                        " failed.");
+                        "UiState action " + (index + 1) + " of " + (activityDescription ?? funcs.Length.ToString()));
             }
             return pageWrapper;
         }
@@ -41,7 +46,7 @@ namespace FluentBrowserAutomation
         {
             var browser = pageWrapper.BrowserContext.Browser;
             browser.Close();
-            foreach (string handle in browser.WindowHandles)
+            foreach (var handle in browser.WindowHandles)
             {
                 browser.SwitchTo().Window(handle);
                 if (getTabIdentifier(browser))

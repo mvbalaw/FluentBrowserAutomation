@@ -16,7 +16,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public BooleanState SelectedState()
 		{
-			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist in SelectedState");
 			return new BooleanState(HowFound + " should have been selected but was not",
 				HowFound + " should not have been selected but was",
 				() => Element.Selected, value => this.Click());
@@ -24,13 +24,13 @@ namespace FluentBrowserAutomation.Controls
 
 		public void ShouldBeSelected()
 		{
-			BrowserContext.WaitUntil(x => SelectedState().IsTrue, errorMessage:"wait for " + HowFound + " to be selected");
+			BrowserContext.WaitUntil(x => SelectedState().IsTrue, errorMessage:"wait for " + HowFound + " to be selected in ShouldBeSelected");
 			SelectedState().ShouldBeTrue();
 		}
 
 		public void ShouldNotBeSelected()
 		{
-			BrowserContext.WaitUntil(x => SelectedState().IsFalse, errorMessage:"wait for " + HowFound + " to be unselected");
+			BrowserContext.WaitUntil(x => SelectedState().IsFalse, errorMessage:"wait for " + HowFound + " to be unselected in ShouldNotBeSelected");
 			SelectedState().ShouldBeFalse();
 		}
 
@@ -40,7 +40,7 @@ namespace FluentBrowserAutomation.Controls
 			{
 				this.Click();
 				return SelectedState().IsTrue == shouldBeSelected;
-			}, errorMessage:"wait for " + HowFound + " to be " + (shouldBeSelected ? "selected" : "unselected"));
+			}, errorMessage:"wait for " + HowFound + " to be " + (shouldBeSelected ? "selected" : "unselected")+" in Toggle");
 		}
 
 		public void UnselectIt()

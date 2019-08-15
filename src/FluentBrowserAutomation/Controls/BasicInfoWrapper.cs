@@ -22,7 +22,7 @@ namespace FluentBrowserAutomation.Controls
 			{
 				if (_id == null)
 				{
-					BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage: "wait for " + HowFound + " to exist");
+					BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage: "wait for " + HowFound + " to exist in Id");
 					_id = Element.GetAttribute("id");
 				}
 				return _id;
@@ -35,7 +35,7 @@ namespace FluentBrowserAutomation.Controls
 			{
 				if (_name == null)
 				{
-					BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage: "wait for " + HowFound + " to exist");
+					BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage: "wait for " + HowFound + " to exist in Name");
 					_name = Element.GetAttribute("name");
 				}
 				return _name;

@@ -37,7 +37,7 @@ namespace FluentBrowserAutomation.Controls
 			return cell == null ? null : cell.Element;
 			};
 			var tableCellWrapper = new TableCellWrapper(new RemoteWebElementWrapper(f, f(), BrowserContext), string.Format("{0}, table cell with index {1}", HowFound, zeroBasedIndex), BrowserContext);
-			tableCellWrapper.BrowserContext.WaitUntil(x => tableCellWrapper.Exists().IsTrue, errorMessage: "wait for " + tableCellWrapper.HowFound + " to exist");
+			tableCellWrapper.BrowserContext.WaitUntil(x => tableCellWrapper.Exists().IsTrue, errorMessage: "wait for " + tableCellWrapper.HowFound + " to exist in CellWithIndex");
 			return tableCellWrapper;
 		}
 

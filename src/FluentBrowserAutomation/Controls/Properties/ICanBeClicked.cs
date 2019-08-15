@@ -14,12 +14,12 @@ namespace FluentBrowserAutomation
 	{
 		public static void Click(this ICanBeClicked element)
 		{
-			element.BrowserContext.WaitUntil(x => element.IsVisible().IsTrue, errorMessage:"wait for " + element.HowFound + " to be visible");
+			element.BrowserContext.WaitUntil(x => element.IsVisible().IsTrue, errorMessage:"wait for " + element.HowFound + " to be visible in Click");
 
 			var couldBeDisabled = element as ICouldBeDisabled;
 			if (couldBeDisabled != null)
 			{
-				element.BrowserContext.WaitUntil(x => couldBeDisabled.IsEnabled().IsTrue, errorMessage:"wait for " + element.HowFound + " to be enabled");
+				element.BrowserContext.WaitUntil(x => couldBeDisabled.IsEnabled().IsTrue, errorMessage:"wait for " + element.HowFound + " to be enabled in Click");
 			}
 			var needsFocus = element as INeedFocus;
 			if (needsFocus != null)

@@ -41,7 +41,7 @@ namespace FluentBrowserAutomation
 
 		public static INavigationControl ShouldContainText(this INavigationControl navigationControl, string text)
 		{
-			navigationControl.BrowserContext.WaitUntil(x => navigationControl.IsVisible().IsTrue, errorMessage:"wait for " + navigationControl.HowFound + " to be visible");
+			navigationControl.BrowserContext.WaitUntil(x => navigationControl.IsVisible().IsTrue, errorMessage:"wait for " + navigationControl.HowFound + " to be visible in ShouldContainText");
 			navigationControl.Element.Text.Contains(text).ShouldBeTrue();
 			return navigationControl;
 		}

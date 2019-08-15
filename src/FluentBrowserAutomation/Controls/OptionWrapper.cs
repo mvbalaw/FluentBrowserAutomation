@@ -16,7 +16,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public void Select()
 		{
-			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist in Select");
 			_parentDropDown.ScrollToIt();
 			var select = new SelectElement(_parentDropDown.Element.RemoteWebElement);
 			select.SelectByText(Text);

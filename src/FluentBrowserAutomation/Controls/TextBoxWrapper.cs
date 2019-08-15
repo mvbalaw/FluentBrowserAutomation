@@ -20,19 +20,19 @@ namespace FluentBrowserAutomation.Controls
 
 		public void KeyboardCopy()
 		{
-			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist in KeyboardCopy");
 			Element.SendKeys(Keys.Control + "c");
 		}
 
 		public void KeyboardPaste()
 		{
-			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist in KeyboardPaste");
 			Element.SendKeys(Keys.Control + "v");
 		}
 
 		public TextBoxWrapper KeyboardSelectAll()
 		{
-			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist in KeyboardSelectAll");
 			Element.SendKeys(Keys.Control + "a");
 			return this;
 		}
@@ -41,6 +41,7 @@ namespace FluentBrowserAutomation.Controls
 		{
 			this.ScrollToIt();
 			Element.Clear();
+			BrowserContext.Trace("-- setting " + HowFound + " to '" + text + "'");
 			Element.SendKeys(text);
 			BrowserContext.WaitForPendingRequests();
 			return this;
@@ -53,12 +54,12 @@ namespace FluentBrowserAutomation.Controls
 
 		public void ShouldHaveTextValue(string expected, string errorMessage = null)
 		{
-			BrowserContext.WaitUntil(x => HasTextValue(expected), errorMessage:errorMessage ?? "wait for " + HowFound + " to have text value '" + expected + "'");
+			BrowserContext.WaitUntil(x => HasTextValue(expected), errorMessage:errorMessage ?? "wait for " + HowFound + " to have text value '" + expected + "' in ShouldHaveTextValue");
 		}
 
 		public void ShouldNotHaveTextValue(string expected, string errorMessage = null)
 		{
-			BrowserContext.WaitUntil(x => !HasTextValue(expected), errorMessage:errorMessage ?? "wait for " + HowFound + " to NOT have text value '" + expected + "'");
+			BrowserContext.WaitUntil(x => !HasTextValue(expected), errorMessage:errorMessage ?? "wait for " + HowFound + " to NOT have text value '" + expected + "' in ShouldNotHaveTextValue");
 		}
 
 		// unsupported in ChromeDriver1, maybe work in chromedriver2
@@ -87,7 +88,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public ReadOnlyText Text()
 		{
-			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist in Text");
 			return new ReadOnlyText(HowFound, Element.GetAttribute("value"));
 		}
 

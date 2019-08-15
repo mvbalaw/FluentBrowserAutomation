@@ -28,7 +28,7 @@ namespace FluentBrowserAutomation
 
 		public static IAmInputThatCanBeChanged Focus(this IAmInputThatCanBeChanged input)
 		{
-			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible");
+			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible in Focus");
 
 			new Actions(input.BrowserContext.Browser)
 				.MoveToElement(input.Element.RemoteWebElement)

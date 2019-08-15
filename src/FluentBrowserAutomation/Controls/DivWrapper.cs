@@ -11,7 +11,7 @@ namespace FluentBrowserAutomation.Controls
 
 		public ReadOnlyText Text()
 		{
-			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist");
+			BrowserContext.WaitUntil(x => this.Exists().IsTrue, errorMessage:"wait for " + HowFound + " to exist in Text");
 
 			return new ReadOnlyText(HowFound, Element.Text);
 		}

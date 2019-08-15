@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Text;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
@@ -122,11 +123,15 @@ namespace FluentBrowserAutomation.Framework
 
 		public void Trace(string s)
 		{
-			if (!_writeTraceOutput)
+			var sb = Thread.GetData(Thread.GetNamedDataSlot("TestLog")) as StringBuilder;
+			if (sb != null)
 			{
-				return;
+				sb.AppendLine(s.StartsWith("-- ") ? s : "-- "+s);
 			}
-			Console.WriteLine(s);
+			if (_writeTraceOutput)
+			{
+				Console.WriteLine(s);
+			}
 		}
 
 		private IWebDriver AttachToExistingBrowser<TBrowser>()

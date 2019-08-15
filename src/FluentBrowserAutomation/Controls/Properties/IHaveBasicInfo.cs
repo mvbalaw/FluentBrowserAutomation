@@ -80,7 +80,7 @@ namespace FluentBrowserAutomation
 
 		public static void AssertIsCheckBox(this IHaveBasicInfo input)
 		{
-			input.BrowserContext.WaitUntil(x => input.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist");
+			input.BrowserContext.WaitUntil(x => input.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist in AssertIsCheckBox");
 			if (!input.IsCheckBox())
 			{
 				throw new AssertionException(input.HowFound + " is not a checkbox.");
@@ -89,7 +89,7 @@ namespace FluentBrowserAutomation
 
 		public static void AssertIsDropDownList(this IHaveBasicInfo input)
 		{
-			input.BrowserContext.WaitUntil(x => input.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist");
+			input.BrowserContext.WaitUntil(x => input.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist in AssertIsDropDownList");
 			if (!IsDropDownList(input))
 			{
 				throw new AssertionException(input.HowFound + " is not a drop down list.");
@@ -98,7 +98,7 @@ namespace FluentBrowserAutomation
 
 		public static void AssertIsRadioOption(this IHaveBasicInfo input)
 		{
-			input.BrowserContext.WaitUntil(x => input.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist");
+			input.BrowserContext.WaitUntil(x => input.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist in AssertIsRadioOption");
 			if (!input.IsRadioOption())
 			{
 				throw new AssertionException(input.HowFound + " is not a radio option.");
@@ -181,7 +181,7 @@ namespace FluentBrowserAutomation
 		{
 			try
 			{
-				element.BrowserContext.WaitUntil(x => element.Exists().IsTrue, errorMessage:"wait for " + element.HowFound + " to exist.");
+				element.BrowserContext.WaitUntil(x => element.Exists().IsTrue, errorMessage:"wait for " + element.HowFound + " to exist in IsVisible");
 			}
 			catch (ArgumentException)
 			{

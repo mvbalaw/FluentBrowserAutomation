@@ -33,7 +33,7 @@ namespace FluentBrowserAutomation
 
 		public static bool HasTextValue(this IAmGenericInputThatCanBeChanged input, string expected)
 		{
-			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible");
+			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible in HasTextValue");
 			if (input.IsTextBox())
 			{
 				var textBox = input.AsTextBox();
@@ -80,9 +80,9 @@ namespace FluentBrowserAutomation
 		public static IAmInputThatCanBeChanged SelectedOptionValueShouldBeEqualTo(this IAmGenericInputThatCanBeChanged input, string value)
 		{
 			input.AssertIsDropDownList();
-			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible");
+			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible in SelectedOptionValueShouldBeEqualTo");
 			var dropDown = input.AsDropDownList();
-			input.BrowserContext.WaitUntil(x => dropDown.Options.Any(), errorMessage:"wait for " + input.HowFound + " options to be visible");
+			input.BrowserContext.WaitUntil(x => dropDown.Options.Any(), errorMessage:"wait for " + input.HowFound + " options to be visible in SelectedOptionValueShouldBeEqualTo");
 			var selectedValues = dropDown.GetSelectedValues().ToArray();
 			selectedValues.Contains(value).ShouldBeTrue("Selected value of " + dropDown.HowFound + " should be '" + value + "' but is/are '" + string.Join(", ", selectedValues) + "'");
 			return dropDown;
@@ -90,7 +90,7 @@ namespace FluentBrowserAutomation
 
 		public static IAmInputThatCanBeChanged SetTo(this IAmGenericInputThatCanBeChanged input, string text)
 		{
-			input.WaitUntil(x => x.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist");
+			input.WaitUntil(x => x.Exists().IsTrue, errorMessage:"wait for " + input.HowFound + " to exist in SetTo");
 
 			if (input.IsTextBox())
 			{
@@ -165,12 +165,12 @@ namespace FluentBrowserAutomation
 			{
 				throw new AssertionException(input.HowFound + " is not a text box. It is a(n) " + input.GetType());
 			}
-			input.BrowserContext.WaitUntil(x => textBox.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible");
+			input.BrowserContext.WaitUntil(x => textBox.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible in ShouldBeEqualTo");
 			input.BrowserContext.WaitUntil(x =>
 			{
 				var actual = textBox.Text().Text ?? "";
 				return actual == (expected??"");
-			}, errorMessage:"wait for " + input.HowFound + " to have text '" + expected + "'");
+			}, errorMessage:"wait for " + input.HowFound + " to have text '" + expected + "' in ShouldBeEqualTo");
 			textBox.Text().ShouldBeEqualTo(expected ?? "");
 			return textBox;
 		}
@@ -178,9 +178,9 @@ namespace FluentBrowserAutomation
 		public static IAmInputThatCanBeChanged ShouldHaveOption(this IAmGenericInputThatCanBeChanged input, string optionText)
 		{
 			input.AssertIsDropDownList();
-			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible");
+			input.BrowserContext.WaitUntil(x => input.IsVisible().IsTrue, errorMessage:"wait for " + input.HowFound + " to be visible in ShouldHaveOption");
 			var dropDown = input.AsDropDownList();
-			input.BrowserContext.WaitUntil(x => dropDown.Options.Any(), errorMessage:"wait for " + input.HowFound + " options to be visible");
+			input.BrowserContext.WaitUntil(x => dropDown.Options.Any(), errorMessage:"wait for " + input.HowFound + " options to be visible in ShouldHaveOption");
 			dropDown.Options.Select(x => (string)x.Text).ToList().ShouldContainAll(new[] { optionText });
 			return dropDown;
 		}
