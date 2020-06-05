@@ -41,6 +41,23 @@ namespace FluentBrowserAutomation.Controls
 			return tableCellWrapper;
 		}
 
+		public TableCellWrapper CellWithClassName(string className)
+		{
+			Func<IWebElement> f = ()=>
+			{
+				var cell = GetCells()
+					.FirstOrDefault(x =>
+					{
+						var @class = x.GetAttribute("class") ?? "";
+						return @class.Split(' ').Contains(className);
+					});
+				return cell;
+			};
+			var tableCellWrapper = new TableCellWrapper(new RemoteWebElementWrapper(f, f(), BrowserContext), string.Format("{0}, table cell with class name {1}", HowFound, className), BrowserContext);
+			tableCellWrapper.BrowserContext.WaitUntil(x => tableCellWrapper.Exists().IsTrue, errorMessage: "wait for " + tableCellWrapper.HowFound + " to exist in CellWithIndex");
+			return tableCellWrapper;
+		}
+
 		private IEnumerable<IWebElement> GetCells()
 		{
 			return Element.GetChildElementsByTagName("td");
