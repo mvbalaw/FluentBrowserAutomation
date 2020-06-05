@@ -2,11 +2,17 @@ using FluentBrowserAutomation.Accessors;
 
 namespace FluentBrowserAutomation.Controls
 {
-	public class TableCellWrapper : BasicInfoWrapper
+	public class TableCellWrapper : BasicInfoWrapper, ICanBeClicked
 	{
 		public TableCellWrapper(RemoteWebElementWrapper tableCell, string howFound, IBrowserContext browserContext)
 			: base(tableCell, howFound, browserContext)
 		{
+		}
+		
+        
+		public void Click()
+		{
+			ICanBeClickedExtensions.Click(this);
 		}
 
 		public ReadOnlyText Text()
