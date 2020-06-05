@@ -85,6 +85,7 @@ namespace FluentBrowserAutomation
 		IEnumerable<SpanWrapper> Spans();
 		IEnumerable<SpanWrapper> SpansWithClassName([NotNull] string className);
 		TableWrapper TableWithId([NotNull] string id);
+		IEnumerable<TableWrapper> TablesWithClassName([NotNull] string className);
 		IEnumerable<TableWrapper> Tables();
 		TextBoxWrapper TextBoxWithFocus();
 		TextBoxWrapper TextBoxWithId([NotNull] string id);
@@ -617,6 +618,14 @@ namespace FluentBrowserAutomation
 			Trace("Getting "+howFound);	
 			var table = this.TryGetElementByIdAndTagName(id, "table");
 			return new TableWrapper(table, howFound, this);
+		}
+
+		public IEnumerable<TableWrapper> TablesWithClassName(string className)
+		{
+			var howFound = string.Format("table with class '{0}'", className);
+			Trace("Getting "+howFound);	
+			return this.GetElementsByClassNameAndTagName(className, "table")
+				.Select(x => new TableWrapper(x, howFound, this));
 		}
 
 		public IEnumerable<TableWrapper> Tables()
