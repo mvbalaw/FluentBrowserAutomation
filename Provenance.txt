@@ -1,3 +1,0 @@
-source: FluentAssert http://github.com/mvbalaw/FluentBrowserAutomation
-
-license source: http://www.opensource.org/licenses/mit-license.php
