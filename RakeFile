@@ -18,7 +18,7 @@ end
 
 $MSBUILD = $MSBUILD + "msbuild.exe"
 PRODUCT_NAME = "FluentBrowserAutomation"
-DEFAULT_BUILD_NUMBER = "0.1.0"
+DEFAULT_BUILD_NUMBER = "0.9.0"
 COMPANY_NAME = "MVBA, P.C."
 COPYRIGHT = "MVBA, P.C. (c) 2010-2020"
 ARTIFACTS = File.expand_path("dist")
