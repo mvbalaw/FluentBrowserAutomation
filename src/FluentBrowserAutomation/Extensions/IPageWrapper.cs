@@ -12,24 +12,24 @@ namespace FluentBrowserAutomation
 
     public static class IPageWrapperExtensions
     {
-        public static T UiState<T>(this T pageWrapper, params Action<IBrowserContext>[] funcs) where T : IPageWrapper
+        public static T UiState<T>(this T pageWrapper, params Action<IBrowserContext>[] funcArray) where T : IPageWrapper
         {
 			pageWrapper.BrowserContext.Trace("-- Performing: unlabeled action");
 
-	        return UiState(pageWrapper, null, funcs);
+	        return UiState(pageWrapper, null, funcArray);
         }
 
         public static T UiState<T>(this T pageWrapper, string activityDescription = null,
-            params Action<IBrowserContext>[] funcs) where T : IPageWrapper
+            params Action<IBrowserContext>[] funcArray) where T : IPageWrapper
         {
 	        if (activityDescription != null)
 	        {
 		        pageWrapper.BrowserContext.Trace("-- Performing: " + activityDescription);
 	        }
 
-	        for (var index = 0; index < funcs.Length; index++)
+	        for (var index = 0; index < funcArray.Length; index++)
             {
-                var func = funcs[index];
+                var func = funcArray[index];
                 var func1 = func;
                 pageWrapper.BrowserContext.WaitUntil(x =>
                 {
@@ -37,7 +37,7 @@ namespace FluentBrowserAutomation
                     return true;
                 },
                     errorMessage:
-                        "UiState action " + (index + 1) + " of " + (activityDescription ?? funcs.Length.ToString()));
+                        "UiState action " + (index + 1) + " of " + (activityDescription ?? funcArray.Length.ToString()));
             }
             return pageWrapper;
         }

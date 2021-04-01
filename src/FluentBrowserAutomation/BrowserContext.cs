@@ -52,6 +52,7 @@ namespace FluentBrowserAutomation
 		IEnumerable<RemoteWebElementWrapper> GetWebElementsWithClassName([NotNull] string className);
 		void GoToUrl([NotNull] string url);
 		TextBoxWrapper HiddenWithId([NotNull] string id);
+		// ReSharper disable once IdentifierTypo
 		IEnumerable<TextBoxWrapper> Hiddens();
 		BrowserContext IdOfFieldWithFocusShouldBe([NotNull] string expectedId);
 		IEnumerable<ButtonWrapper> ImageButtons();
@@ -346,6 +347,7 @@ namespace FluentBrowserAutomation
 			return new TextBoxWrapper(hidden, howFound, this);
 		}
 
+		// ReSharper disable once IdentifierTypo
 		public IEnumerable<TextBoxWrapper> Hiddens()
 		{
 			const string howFound = "all hidden inputs";
