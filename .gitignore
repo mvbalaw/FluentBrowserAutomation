@@ -5,4 +5,13 @@ src/.vs
 src/Directory.Build.props
 [Bb]in/
 [Oo]bj/
-
+src/packages
+dist.bat
+*.user
+*.suo
+src/_ReSharper*
+*.DotSettings
+*.license.txt
+*.provenance.txt
+FluentAssert.xml
+CommonAssemblyInfo.cs
