@@ -155,7 +155,10 @@ namespace FluentBrowserAutomation
 				.Select(input => new ButtonWrapper(input, howFound, this)).ToList();
 			var buttonWrappers =
 				this.GetElements(By.TagName("button")).Select(input => new ButtonWrapper(input, howFound, this));
-			var listWrappers = inputWrappers.Concat(buttonWrappers);
+			var listWrappers = inputWrappers
+				.Concat(buttonWrappers)
+				.GroupBy(x=>x.Element)
+				.Select(x=>x.First());
 			return listWrappers;
 		}
 
@@ -481,6 +484,8 @@ namespace FluentBrowserAutomation
 			Trace("Getting "+howFound);	
 			var items = this.GetElements(By.LinkText(text))
 				.Concat(this.GetElements(By.XPath("//a["+text.EscapeForXpath("text()")+"]|//a["+htmlEscapedText.EscapeForXpath("text()")+"]")))
+				.GroupBy(x => x.RemoteWebElement)
+				.Select(x => x.First())
 				.Select(link => new LinkWrapper(link, howFound, this));
 			return items;
 		}
