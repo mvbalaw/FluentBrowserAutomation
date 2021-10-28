@@ -1,5 +1,4 @@
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 
 // ReSharper disable once CheckNamespace
 
@@ -45,7 +44,7 @@ namespace FluentBrowserAutomation
                 if (exception.Message.Contains("Other element would receive the click") || exception.Message.Contains("Element is not clickable at point"))
 				{
 					// try scrolling down to the element
-					var yLocation = ((RemoteWebElement)webElement.RemoteWebElement).Location.Y + 100;
+					var yLocation = webElement.RemoteWebElement.Location.Y + 100;
 					for (var yOffset = 50; yOffset < yLocation; yOffset += 250)
 					{
 						try

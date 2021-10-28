@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
 
 namespace FluentBrowserAutomation.Framework
 {
@@ -17,12 +16,12 @@ namespace FluentBrowserAutomation.Framework
 		void Close();
 		void CloseAllOpenBrowsers();
 		IWebDriver GetBrowser();
-		IWebDriver GetBrowser<TBrowser>() where TBrowser : RemoteWebDriver, new();
+		IWebDriver GetBrowser<TBrowser>() where TBrowser : WebDriver, new();
 		void Trace(string s);
 	}
 
 	public class BrowserManager<T> : IBrowserManager
-		where T : RemoteWebDriver, new()
+		where T : WebDriver, new()
 	{
 //// ReSharper disable StaticFieldInGenericType
 //// ReSharper disable InconsistentNaming
@@ -94,7 +93,7 @@ namespace FluentBrowserAutomation.Framework
 			return GetBrowser<T>();
 		}
 
-		public IWebDriver GetBrowser<TBrowser>() where TBrowser : RemoteWebDriver, new()
+		public IWebDriver GetBrowser<TBrowser>() where TBrowser : WebDriver, new()
 		{
 			var driver = AttachToExistingBrowser<TBrowser>();
 			if (driver == null)

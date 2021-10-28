@@ -9,7 +9,6 @@ using FluentBrowserAutomation.Extensions;
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Remote;
 
 // ReSharper disable once CheckNamespace
 
@@ -44,8 +43,8 @@ namespace FluentBrowserAutomation
 		public static BooleanState HasFocus(this IAmVisualElement element)
 		{
 			element.BrowserContext.WaitUntil(x => element.Exists().IsTrue, errorMessage:"wait for "+ element.HowFound+" to exist in HasFocus");
-			var elementWithFocus = (RemoteWebElement)element.BrowserContext.Browser.SwitchTo().ActiveElement();
-			var inputAsRemoteWebElement = (RemoteWebElement)element.Element.RemoteWebElement;
+			var elementWithFocus = (WebElement)element.BrowserContext.Browser.SwitchTo().ActiveElement();
+			var inputAsRemoteWebElement = (WebElement)element.Element.RemoteWebElement;
 			var isSameElement = elementWithFocus.Size == inputAsRemoteWebElement.Size &&
 				elementWithFocus.Location == inputAsRemoteWebElement.Location &&
 				elementWithFocus.LocationOnScreenOnceScrolledIntoView == inputAsRemoteWebElement.LocationOnScreenOnceScrolledIntoView;
