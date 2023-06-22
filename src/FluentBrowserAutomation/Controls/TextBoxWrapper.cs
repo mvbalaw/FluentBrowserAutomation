@@ -40,7 +40,10 @@ namespace FluentBrowserAutomation.Controls
 		public dynamic SetTo(string text)
 		{
 			this.ScrollToIt();
-			Element.Clear();
+
+            Element.SendKeys(Keys.Control + "a");
+            Element.SendKeys(Keys.Delete);
+
 			BrowserContext.Trace("-- setting " + HowFound + " to '" + text + "'");
 			Element.SendKeys(text);
 			BrowserContext.WaitForPendingRequests();
