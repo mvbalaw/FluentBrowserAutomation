@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 
 namespace FluentBrowserAutomation.Framework
 {
@@ -107,6 +108,15 @@ namespace FluentBrowserAutomation.Framework
 					driver = new ChromeDriver(options);
 					_browsers.Add(driver);
 				}
+                else if (typeof(T) == typeof(EdgeDriver))
+                {
+                    var options = new EdgeOptions(); // disable the user-experience popup
+                    options.AddUserProfilePreference("user_experience_metrics", new
+                    {
+                        personalization_data_consent_enabled = true
+                    });
+                    driver = new EdgeDriver(options:options);
+                }
 				else
 				{
 					driver = new T();
