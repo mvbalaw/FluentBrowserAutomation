@@ -116,6 +116,7 @@ namespace FluentBrowserAutomation.Framework
                         personalization_data_consent_enabled = true
                     });
                     driver = new EdgeDriver(options:options);
+                    _browsers.Add(driver);
                 }
 				else
 				{
