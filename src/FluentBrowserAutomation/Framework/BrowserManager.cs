@@ -99,7 +99,7 @@ namespace FluentBrowserAutomation.Framework
 			var driver = AttachToExistingBrowser<TBrowser>();
 			if (driver == null)
 			{
-				if (typeof(T) == typeof(ChromeDriver))
+				if (typeof(TBrowser) == typeof(ChromeDriver))
 				{
 					var options = new ChromeOptions();
 					options.AddArgument("disable-infobars");
@@ -108,7 +108,7 @@ namespace FluentBrowserAutomation.Framework
 					driver = new ChromeDriver(options);
 					_browsers.Add(driver);
 				}
-                else if (typeof(T) == typeof(EdgeDriver))
+                else if (typeof(TBrowser) == typeof(EdgeDriver))
                 {
                     var options = new EdgeOptions(); // disable the user-experience popup
                     options.AddUserProfilePreference("user_experience_metrics", new
@@ -120,7 +120,7 @@ namespace FluentBrowserAutomation.Framework
                 }
 				else
 				{
-					driver = new T();
+					driver = new TBrowser();
 					_browsers.Add(driver);
 				}
 			}

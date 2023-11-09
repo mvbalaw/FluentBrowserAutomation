@@ -122,11 +122,16 @@ namespace FluentBrowserAutomation
 				() =>
 				{
 					try
+                    {
+                        var elementWrapper = element.Element;
+                        return elementWrapper.Exists;
+                    }
+					catch (Exception exception)
 					{
-						return element.Element.Exists;
-					}
-					catch (Exception)
-					{
+                        if (exception.Message.Contains("result.webdriverValue.value list is missing or empty"))
+                        {
+                            throw new Exception("Your Browser driver is out of sync with your Browser version, update one or both.", exception);
+                        }
 						return false;
 					}
 				});

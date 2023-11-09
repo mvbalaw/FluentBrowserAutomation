@@ -323,9 +323,10 @@ namespace FluentBrowserAutomation
 				{
 					executeScript = js.ExecuteScript(script);
 				}
-				catch (Exception)
+				catch (Exception exception)
 				{
-					executeScript = 1;
+                    Trace("GetPendingRequests() - caught: "+exception.Message);
+                    executeScript = 1;
 				}
 				pendingRequests = executeScript as int? ?? 0;
 			}
@@ -723,10 +724,12 @@ namespace FluentBrowserAutomation
 		}
 
 		public void WaitForPendingRequests(int milliseconds = 250)
-		{
-			while (GetPendingRequests() > 0)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+			while (GetPendingRequests() > 0 && stopwatch.ElapsedMilliseconds < milliseconds)
 			{
-				new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(milliseconds));
+				new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(50));
 			}
 		}
 
